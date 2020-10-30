@@ -1,9 +1,21 @@
 **Milestone 1 contents** due: Friday October 30, 4:59pm
-- Brief description of your planned DSL idea
+- Brief description of your planned program analysis and/or visualisation ideas.
 - Notes of any important changes/feedback from TA discussion
 - Any planned follow-up tasks or features still to design
 
+We have two ideas in mind for our project idea.  
 
+1. UML Class Diagram visualiser:  
+Given a source code directory (or github repo) written in Java, our program will spew out an appropriate UML class diagram-model of the class structure and its relations with each other.  
+
+2. UML Sequence Diagram visualizer:
+Given a source code directory (or github repo) written in Java, our program will run the source program and generate a sequence diagram ex  
+![Sequence Diagram](assets/sequence_diagram.PNG)  
+
+Some useful feedback from our discussion with the TA is that we should put some more emphasis on the visualization of our analysis; it would be beneficially to display a dynamic chart rather than a static one.  Also, we should also come up with new ways of adding complexity to both our project ideas.
+
+Our followup from this milestone is to sit on creating a project idea over the weekend or add more specifications to our existing ideas and meet on Monday for a group discussion.  
+ 
 
 **Milestone 2 contents** due: Friday November 6, 4:59pm
 - Planned division of main responsibilities between team members
