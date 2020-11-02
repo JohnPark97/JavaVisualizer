@@ -22,7 +22,25 @@ Our followup from this milestone is to sit on creating a project idea over the w
 - Roadmap for what should be done when
 - Summary of progress so far
 
-Roadmap: (template)
+Project Idea:  
+Repository File Contributions Visualizer
+
+Input: github repo  
+
+![Example](assets/PoC.PNG)  
+
+Output: 
+- “Nodes” of files or even folders 
+- Click on folders to display inner files 
+- Tree structure of files
+- Size of circle depends on file size (# lines)
+
+Features:
+- Clicking on a node brings up / updates a dropdown menu that displays the “ownership” made by all contributors 
+- Can have a bar chart instead of raw numbers for even better visualization 
+- User can choose commit (defaults to latest one) from commit history
+
+***Roadmap:*** 
 | Due Date   | Tasks          | Responsible  |
 | -----------|----------------| -----|
 | Nov 10     | Front End: static page (UI elements) finished (use dummy data for nodes)     | Andy, Juan, John  |
@@ -32,8 +50,9 @@ Roadmap: (template)
 | Nov 16     | Front End: Load nodes from back end values                                   | Andy, Juan, John |
 | Nov 20     | Front End: Drop-down menu contents finished                                  | Andy, Juan, John |
 | Nov 26     | User Study #2                                                                | Andy, Juan |  
-| Nov 27     | Front End: Search filtering, commit selection                                | Mandy, Andy, Juan, James |
+| Nov 27     | Front End: Commit selection                                                  | Mandy, Andy, Juan, James |
 | Nov 30     | Video Editting                                                               | John |  
+
 
 
 
