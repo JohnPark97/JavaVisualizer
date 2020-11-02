@@ -25,16 +25,15 @@ Our followup from this milestone is to sit on creating a project idea over the w
 Roadmap: (template)
 | Due Date   | Tasks          | Responsible  |
 | -----------|----------------| -----|
-| date 1     | task 1         | James |
-| date 2     | task 2         | Andy, Juan, James |
-| date 3     | task 3         | Mandy, John  |
-| date 4     | task 4         | Mandy, John |
-| date 5     | task 5         | Andy, Juan, James |
-| date 6     | task 6         | Mandy, John |
-| date 7     | task 7         | James, Juan |
-| date 8     | task 8         | Andy, Juan, James |  
-| date 9     | task 9         | Mandy, Andy, Juan, James |
-| date 10    | task 10        | John |
+| Nov 10     | Front End: static page (UI elements) finished (use dummy data for nodes)     | Andy, Juan, John  |
+| Nov 10     | Front End: pass field parameter (github repo) for Back End                   | Andy, Juan, John  |
+| Nov 12     | User Study #1                                                                | Mandy, James |
+| Nov 13     | Back End: API call and return nodes                                          | Mandy, James |
+| Nov 16     | Front End: Load nodes from back end values                                   | Andy, Juan, John |
+| Nov 20     | Front End: Drop-down menu contents finished                                  | Andy, Juan, John |
+| Nov 26     | User Study #2                                                                | Andy, Juan |  
+| Nov 27     | Front End: Search filtering, commit selection                                | Mandy, Andy, Juan, James |
+| Nov 30     | Video Editting                                                               | John |  
 
 
 
