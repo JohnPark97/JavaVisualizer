@@ -4,6 +4,8 @@ const getRepoURL = () => {
     $('#submit').on('click', () => {
       repoURL = $('#repo-link').val();
       if (!repoURL) return window.alert('Please enter a Github repo');
+      
+      // validate URL?
       return resolve(repoURL);
     });
   });
@@ -13,7 +15,7 @@ const main = async () => {
   let repoURL;
   try {
     repoURL = await getRepoURL();
-    getData(repoURL);
+    await getData(repoURL);
   } catch {
     // do nothing for now
   }
