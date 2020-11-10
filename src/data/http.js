@@ -8,5 +8,8 @@ const httpRequest = async (url, options = {}) => {
   const res = await fetch(url, options);
 
   // TODO handle error codes?
+  if (res.status === 204 || res.status === 205) {
+    return null;
+  }
   return await res.json();
 };

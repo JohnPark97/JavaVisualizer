@@ -12,11 +12,12 @@ const getRepoURL = () => {
 };
 
 const main = async () => {
-  let repoURL;
+  let repoURL, res;
   try {
     repoURL = await getRepoURL();
-    await getData(repoURL);
-  } catch {
+    res = await getData(repoURL);
+  } catch (err) {
+    console.log(err);
     // do nothing for now
   }
 
@@ -24,6 +25,7 @@ const main = async () => {
   data = {
 
   };
+  data = res;
   visualize(data);
 };
 
