@@ -21,11 +21,15 @@ class Town {
       .attr('y', 0)
       .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
-      .style('stroke', '#000000') // black
+      .style('stroke', 'black')
       .style('fill', 'none')
       .style('stroke-width', 1);
 
     vis.town = vis.svg.append('g');
+
+    vis.svg.call(d3.zoom().on('zoom', () => {
+      vis.town.attr('transform', d3.event.transform);
+    }));;
   }
 
   update() {
@@ -73,7 +77,7 @@ class Town {
           .attr('transform', (d) => `translate(${d.x}, ${d.y})`);
       });;
 
-    vis.links = vis.svg.selectAll('.link')
+    vis.links = vis.town.selectAll('.link')
       .data(vis.data.links)
       .enter().append('line')
       .attr('class', 'link')
@@ -90,7 +94,7 @@ class Town {
     //   .attr('id', (d, i) => 'edgepath' + i)
     //   .style('pointer-events', 'none');
 
-    vis.nodes = vis.svg.selectAll('.node')
+    vis.nodes = vis.town.selectAll('.node')
       .data(vis.data.classes)
       .enter().append('g')
       .attr('class', 'node')
