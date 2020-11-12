@@ -1,3 +1,5 @@
+const testDataFilePath = '../assets/test_data.json';
+
 const getRepoURL = () => {
   return new Promise((resolve, reject) => {
     let repoURL;
@@ -12,21 +14,21 @@ const getRepoURL = () => {
 };
 
 const main = async () => {
-  let repoURL, res;
+  let repoURL, res, testData;
   try {
-    repoURL = await getRepoURL();
-    res = await getData(repoURL);
+    /* To get data from backend */
+    // repoURL = await getRepoURL();
+    // res = await getData(repoURL);
   } catch (err) {
     console.log(err);
-    // do nothing for now
   }
 
   // mocked data
-  data = {
-
-  };
-  data = res;
-  visualize(data);
+  res = await fetch(testDataFilePath);
+  testData = await res.json();
+  testData = formatData(testData);
+  console.log(testData);
+  visualize(testData);
 };
 
 main();

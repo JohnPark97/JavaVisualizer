@@ -16,3 +16,31 @@ const getData = async (repoURL) => {
 
   return res;
 };
+
+const formatData = (data) => {
+  let classes = []
+  let links = [];
+  data.classes.forEach((klass) => {
+    Object.entries(klass).forEach((prop) => {
+      classes.push({
+        className: prop[0],
+        lineCount: prop[1],
+      });
+    });
+  });
+
+  data.links.forEach((link) => {
+    Object.entries(link).forEach((relationship) => {
+      relationship[1].forEach((target) => {
+        links.push({
+          source: relationship[0],
+          target,
+        });
+      });
+    });
+  });
+  console.log(classes)
+  console.log(links)
+
+  return { classes, links };
+}
