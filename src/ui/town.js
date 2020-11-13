@@ -5,7 +5,7 @@ class Town {
       containerWidth: _config.containerWidth || 1000,
       containerHeight: _config.containerHeight || 600,
     }
-
+    this.detail = _config.detail;
     this.initVis();
   }
 
@@ -112,7 +112,12 @@ class Town {
           if (!d3.event.active) vis.simulation.alphaTarget(0);
           d.fx = null;
           d.fy = null;
-        }));
+        }))
+      .on('click', d => {
+        vis.detail.selectedClass =
+          vis.detail.selectedClass = d.className;
+        vis.detail.update();
+      });
 
     // House
     vis.nodes.append('rect')
