@@ -61,7 +61,29 @@ Features:
 - Notes about first user study 
 - Any changes to original language design
 
+After numerous back and forth discussions and feedback from our TA, we have decided to revamp our project idea to visualize the UML class and depedencies of a Java repository.  To enhance visualization, we will represent these classes as "houses" with "roads" serving as edges to symbolize a dependency.
 
+An example snippet of the visualization: 
+![Example](assets/PoC2.PNG)  
+
+In lieu of our new idea, we also had to update our roadmap:
+
+***Roadmap:*** 
+| Due Date   | Tasks          | Responsible  |
+| -----------|----------------| -----|
+| Nov 10     | Front End: pass field paramater (github repo) for Back End     | Andy, Juan, John  |
+| Nov 11     | Java servlet                   | Andy |
+| Nov 12     | Front End: static (UI elements) finished (use dummy data for nodes)          | Juan, John, (Andy) |
+| Nov 13     | User Study #1                                                                | Mandy, James |
+| Nov 15     | Back End: API call and return nodes (JSON object); <br> - GET (AST JSON object) <br> - POST (either a zip file, or get from github repo)                                                                           | Mandy, James |
+| Nov 16     | Front End: Load nodes from back end values                                   | Andy, Juan, John |
+| Nov 20     | Front End: Additional component (?) *enhance viz*                            | Andy, Juan, John |
+| Nov 26     | User Study #2                                                                | Andy, Juan |  
+| Nov 27     | Wrap up                                                                      | Mandy, Andy, Juan, James |
+| Nov 30     | Video Editting                                                               | John |   
+ 
+   
+**User Study #1 Notes:** https://docs.google.com/document/d/1Q8jTLI_kAcJhpJ_UkJ9qyX2hBMSYgT-Pq0sFSg0Vt0c/edit?usp=sharing
 
 **Milestone 4 contents** due: Friday November 20, 4:59pm
 - Status of implementation
