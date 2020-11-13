@@ -18,18 +18,12 @@ To start using this project, you need to get your computer configured so you can
 
 ## Project Details
 
-Project Idea:  Repository File Contributions Visualizer
+Project Idea:  Java Project UML Class + Dependency Visualizer 
 
-Input: github repo  
-![Example](assets/PoC.PNG)  
+Input: github link (source code directory)  
+![Example](assets/PoC2.PNG)  
 
 Output: 
-- “Nodes” of files or even folders 
-- Click on folders to display inner files 
-- Tree structure of files
-- Size of circle depends on file size (# lines)
+- Java classes represented as "Houses"
+- Size of house reflects lines of code
 
-Features:
-- Clicking on a node brings up / updates a dropdown menu that displays the “ownership” made by all contributors 
-- Can have a bar chart instead of raw numbers for even better visualization 
-- User can choose commit (defaults to latest one) from commit history
