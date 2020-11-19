@@ -1,15 +1,24 @@
 package data;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.google.errorprone.annotations.Var;
+
 import java.util.List;
 
 public class JavaClass {
     String ClassName;
     Boolean Interface;
-    List<String> GlobalVariables;
+    List<String> links;
+    List<Variable> GlobalVariables;
     List<String> Methods;
-    List<String> Dependencies;
+    List<String> Links;
 
-    public JavaClass(){
+    public JavaClass(String cn , boolean i, List<Variable> gv, List<String> m, List<String> l){
+        ClassName = cn;
+        Interface = i;
+        GlobalVariables = gv;
+        Methods  = m;
+        Links = l;
 
     }
 
@@ -21,7 +30,7 @@ public class JavaClass {
         return Interface;
     }
 
-    public List<String> getGlobalVariables() {
+    public List<Variable> getGlobalVariables() {
         return GlobalVariables;
     }
 
@@ -29,8 +38,8 @@ public class JavaClass {
         return Methods;
     }
 
-    public List<String> getDependencies() {
-        return Dependencies;
+    public List<String> getLinks() {
+        return links;
     }
 
     public void setClassName(String className) {
@@ -41,7 +50,7 @@ public class JavaClass {
         Interface = anInterface;
     }
 
-    public void setGlobalVariables(List<String> globalVariables) {
+    public void setGlobalVariables(List<Variable> globalVariables) {
         GlobalVariables = globalVariables;
     }
 
@@ -49,7 +58,8 @@ public class JavaClass {
         Methods = methods;
     }
 
-    public void setDependencies(List<String> dependencies) {
-        Dependencies = dependencies;
+    public void setLinks(List<String> links) {
+        Links = links;
     }
+
 }

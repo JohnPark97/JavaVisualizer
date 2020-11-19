@@ -42,7 +42,7 @@ public class Inspector {
 
         // Prints out the ast structure:
         YamlPrinter printer = new YamlPrinter(true);
-        System.out.println(printer.output(compilationUnits.get(1)));
+ //       System.out.println(printer.output(compilationUnits.get(1)));
 
             System.out.println(compilationUnits.size());
 
@@ -51,7 +51,7 @@ public class Inspector {
             for(CompilationUnit cu : compilationUnits){
   //              System.out.println(cu);
                 //visit the ast structure and get the info that we want
-                JavaClass javaClass = new JavaClass();
+                JavaClass javaClass = new JavaClass(null, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                 JavaVisitor visitor = new JavaVisitor();
                 cu.accept(visitor,javaClass);
                 //add it to the list of java classes
