@@ -2,13 +2,13 @@ package data;
 
 import java.util.List;
 
-public class Method {
+public class JavaMethod {
     String returnType;
     String name;
     List<String> modifiers;
     List<JavaParameter> parameterList;
 
-    public Method(String returnType, String name, List<String> modifiers, List<JavaParameter> parameterList) {
+    public JavaMethod(String returnType, String name, List<String> modifiers, List<JavaParameter> parameterList) {
         this.returnType = returnType;
         this.name = name;
         this.modifiers = modifiers;

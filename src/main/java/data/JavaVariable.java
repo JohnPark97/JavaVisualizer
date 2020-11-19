@@ -2,12 +2,12 @@ package data;
 
 import java.util.List;
 
-public class Variable {
+public class JavaVariable {
     String type;
     String Name;
     List<String> Modifiers;
 
-    public Variable(String t, String n, List<String> modifiers){
+    public JavaVariable(String t, String n, List<String> modifiers){
         type = t;
         Name = n;
         Modifiers = modifiers;

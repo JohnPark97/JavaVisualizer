@@ -9,11 +9,11 @@ import java.util.List;
 public class JavaClass {
     String ClassName;
     Boolean Interface;
-    List<Variable> GlobalVariables;
-    List<Method> Methods;
+    List<JavaVariable> GlobalVariables;
+    List<JavaMethod> Methods;
     List<String> Links;
 
-    public JavaClass(String cn , boolean i, List<Variable> gv, List<Method> m, List<String> l){
+    public JavaClass(String cn , boolean i, List<JavaVariable> gv, List<JavaMethod> m, List<String> l){
         ClassName = cn;
         Interface = i;
         GlobalVariables = gv;
@@ -30,11 +30,11 @@ public class JavaClass {
         return Interface;
     }
 
-    public List<Variable> getGlobalVariables() {
+    public List<JavaVariable> getGlobalVariables() {
         return GlobalVariables;
     }
 
-    public List<Method> getMethods() {
+    public List<JavaMethod> getMethods() {
         return Methods;
     }
 
@@ -50,11 +50,11 @@ public class JavaClass {
         Interface = anInterface;
     }
 
-    public void setGlobalVariables(List<Variable> globalVariables) {
+    public void setGlobalVariables(List<JavaVariable> globalVariables) {
         GlobalVariables = globalVariables;
     }
 
-    public void setMethods(List<Method> methods) {
+    public void setMethods(List<JavaMethod> methods) {
         Methods = methods;
     }
 

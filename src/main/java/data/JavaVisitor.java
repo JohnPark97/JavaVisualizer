@@ -40,8 +40,8 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             JavaParameter parameter = new JavaParameter(type,pname);
             listofModifiers.add(pname);
         }
-        List<Method> methodList = arg.getMethods();
-        Method method = new Method(returnType,name,listofModifiers,listofParameters);
+        List<JavaMethod> methodList = arg.getMethods();
+        JavaMethod method = new JavaMethod(returnType,name,listofModifiers,listofParameters);
         methodList.add(method);
         arg.setMethods(methodList);
         System.out.println("Method Name Printed: " + md.getName());
@@ -59,8 +59,8 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             listofModifiers.add(m.getKeyword().asString());
         }
 
-        Variable var = new Variable(type,name,listofModifiers);
-        List<Variable> variables = arg.getGlobalVariables();
+        JavaVariable var = new JavaVariable(type,name,listofModifiers);
+        List<JavaVariable> variables = arg.getGlobalVariables();
         variables.add(var);
         arg.setGlobalVariables(variables);
         System.out.println("Added variable to list: " + name);
