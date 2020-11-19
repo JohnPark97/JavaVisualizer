@@ -1,14 +1,17 @@
 package data;
 
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,26 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
     @Override
     public void visit(MethodDeclaration md, JavaClass arg) {
         super.visit(md, arg);
+        String returnType = md.getTypeAsString();
+        String name = md.getNameAsString();
+        List<String> listofModifiers = new ArrayList<String>();
+
+        NodeList<Modifier> modifiers = md.getModifiers();
+        for(Modifier m: modifiers){
+            listofModifiers.add(m.getKeyword().asString());
+        }
+        List<JavaParameter> listofParameters = new ArrayList<JavaParameter>();
+        NodeList<Parameter> parameters = md.getParameters();
+        for(com.github.javaparser.ast.body.Parameter p: parameters){
+            String pname = p.getNameAsString();
+            String type = p.getTypeAsString();
+            JavaParameter parameter = new JavaParameter(type,pname);
+            listofModifiers.add(pname);
+        }
+        List<Method> methodList = arg.getMethods();
+        Method method = new Method(returnType,name,listofModifiers,listofParameters);
+        methodList.add(method);
+        arg.setMethods(methodList);
         System.out.println("Method Name Printed: " + md.getName());
         }
 
@@ -29,8 +52,14 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         super.visit(fd, arg);
         String type = fd.getVariable(0).getTypeAsString();
         String name = fd.getVariable(0).getNameAsString();
-        String modifier = fd.getModifiers().getFirst().toString();
-        Variable var = new Variable(type,name,modifier);
+        List<String> listofModifiers = new ArrayList<String>();
+
+        NodeList<Modifier> modifiers = fd.getModifiers();
+        for(Modifier m: modifiers){
+            listofModifiers.add(m.getKeyword().asString());
+        }
+
+        Variable var = new Variable(type,name,listofModifiers);
         List<Variable> variables = arg.getGlobalVariables();
         variables.add(var);
         arg.setGlobalVariables(variables);

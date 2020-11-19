@@ -1,14 +1,16 @@
 package data;
 
+import java.util.List;
+
 public class Variable {
     String type;
     String Name;
-    String Modifier;
+    List<String> Modifiers;
 
-    public Variable(String t, String n, String modifier){
+    public Variable(String t, String n, List<String> modifiers){
         type = t;
         Name = n;
-        Modifier = modifier;
+        Modifiers = modifiers;
     }
 
     public String getType() {
@@ -19,9 +21,6 @@ public class Variable {
         return Name;
     }
 
-    public String getModifier() {
-        return Modifier;
-    }
 
     public void setType(String type) {
         this.type = type;
@@ -31,7 +30,11 @@ public class Variable {
         Name = name;
     }
 
-    public void setModifier(String modifier) {
-        Modifier = modifier;
+    public List<String> getModifiers() {
+        return Modifiers;
+    }
+
+    public void setModifiers(List<String> modifier) {
+        Modifiers = modifier;
     }
 }
