@@ -26,7 +26,7 @@ import java.util.Optional;
 public class Main {
     public static void main(String[] args) throws IOException {
         //get the files from project 1
-        File projectDirectory = new File("assets/project1");
+        File projectDirectory = new File("assets/project_to_parse");
         SourceRoot source = new SourceRoot(projectDirectory.toPath());
         //Tries to parse all .java files under the source root recursively,
         // and returns all files ever parsed with this source root.
