@@ -54,7 +54,8 @@ public class Main {
         for(CompilationUnit cu : compilationUnits){
             //              System.out.println(cu);
             //visit the ast structure and get the info that we want
-            JavaClass javaClass = new JavaClass(null, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 0);
+            JavaClass javaClass = new JavaClass(null, false, false,
+                                                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 0);
             JavaVisitor visitor = new JavaVisitor();
             cu.accept(visitor,javaClass);
             //add it to the list of java classes
@@ -62,7 +63,8 @@ public class Main {
         }
         JSONObject jsonProject =  createJSON(ListOfJavaClasses);
 
-        try (FileWriter file = new FileWriter("project.json")) {
+
+        try (FileWriter file = new FileWriter("assets/project.json")) {
 
             file.write(jsonProject.toJSONString());
             file.flush();
@@ -70,21 +72,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-
-        List<ClassOrInterfaceDeclaration> className = compilationUnits.get(1).findAll(ClassOrInterfaceDeclaration.class);
-        // System.out.println(className.get(0).getName());
-
-        List<FieldDeclaration> fields = compilationUnits.get(1).findAll(FieldDeclaration.class);
-        // System.out.println(fields);
-
-        List<ImportDeclaration> imports = compilationUnits.get(1).findAll(ImportDeclaration.class);
-        // System.out.println(imports);
-
-        List<MethodDeclaration> methods = compilationUnits.get(1).findAll(MethodDeclaration.class);
-        // System.out.println(methods.get(1).getDeclarationAsString());
     }
 
     public static JSONObject createJSON(List<JavaClass> list){

@@ -11,14 +11,16 @@ import java.util.List;
 public class JavaClass {
     String ClassName;
     Boolean Interface;
+    Boolean IsEnum;
     Integer LineCount;
     List<JavaVariable> GlobalVariables;
     List<JavaMethod> Methods;
     List<String> Links;
 
-    public JavaClass(String cn , boolean i, List<JavaVariable> gv, List<JavaMethod> m, List<String> l, Integer count){
+    public JavaClass(String cn , boolean i,boolean e, List<JavaVariable> gv, List<JavaMethod> m, List<String> l, Integer count){
         ClassName = cn;
         Interface = i;
+        IsEnum = e;
         LineCount = count;
         GlobalVariables = gv;
         Methods  = m;
@@ -54,6 +56,14 @@ public class JavaClass {
         Interface = anInterface;
     }
 
+    public Boolean getEnum() {
+        return IsEnum;
+    }
+
+    public void setEnum(Boolean anEnum) {
+        IsEnum = anEnum;
+    }
+
     public Integer getLineCount() {
         return LineCount;
     }
@@ -72,22 +82,6 @@ public class JavaClass {
 
     public void setLinks(List<String> links) {
         Links = links;
-    }
-//TODO: need to write the JSONObject creator
-    public JSONObject createJSON(JavaClass jc){
-
-        try (FileWriter file = new FileWriter("project.json")) {
-            JSONObject jo = new JSONObject();
-
-            file.write(jo.toJSONString());
-            file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return new JSONObject();
     }
 
 }

@@ -5,10 +5,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -70,9 +67,22 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
     }
 
     @Override
-    public void visit(ImportDeclaration id, JavaClass  arg) {
-        super.visit(id, arg);
-        System.out.println("ImportDeclaration Printed: " + id.getName());
+    public void visit(EnumDeclaration ed, JavaClass  arg) {
+        super.visit(ed, arg);
+        String EnumName = ed.getNameAsString();
+        Boolean IsInterface = ed.isEnumDeclaration();
+        Integer count =  ed.getEnd().get().line - ed.getBegin().get().line ;
+        List<String> links = new ArrayList<String>();
+        NodeList<ClassOrInterfaceType> implementedTypes = ed.getImplementedTypes();
+
+        for(ClassOrInterfaceType it: implementedTypes){
+            links.add(it.getName().getIdentifier());
+        }
+
+        arg.setClassName(EnumName);
+        arg.setLinks(links);
+        arg.setLineCount(count);
+        System.out.println("EnumDeclaration Printed: " + ed.getName());
     }
 
 
