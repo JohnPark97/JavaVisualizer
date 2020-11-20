@@ -87,8 +87,15 @@ In lieu of our new idea, we also had to update our roadmap:
 
 **Milestone 4 contents** due: Friday November 20, 4:59pm
 - Status of implementation
-- Plans for final user study 
 - Planned timeline for the remaining days
+- Plans for final user study 
+
+**Milestone Report:**  
+We are on track with the roadmap in terms of implementation progress.  Since the last milestone, we finished connecting the GET requests with the github URLs to our front end, utilizing the github API to return project source directories.  We also implemented the back-end by adding the *javaparser* library which will provide us the AST structure of a provided java project.  
+
+Our next big task is to organize the data we are interested with into an appropriate data structure to feed into our front end to display.  Afterwards, we can try and enhance the visualization of the front end with our feedback from our first round of user studies  (improve edges between nodes to represent relations, add more metadata into nodes including code smells, etc).  We will then conduct our final user studies and begin video editting for submission.  
+
+For our final user study, we plan to have the project essetentially complete as reflected in our roadmap.  This way we hope to gain candid and percise feedback on any potential hindsights we may have missed.  Due to the timing of user study, we don't expect to implement any feature requests or fixes unless they are very small, as it will serve more as a retrospective guide and will be included in our video instead.  As for the precise user study task, we will focus on finding users with a basis of computer science knowledge, as our visualizor is quite technical, and non-cs users may not understand what is going on.  We plan on letting them test out their own personal repositories on github and comment on how the visualizor meets with their expectation.  
 
 **Project Completion** due: Monday November 30, 8:59am
 
