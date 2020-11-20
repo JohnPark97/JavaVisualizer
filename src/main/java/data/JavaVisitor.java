@@ -1,5 +1,6 @@
 package data;
 
+import com.github.javaparser.Position;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
@@ -14,8 +15,10 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
+    private Optional<Position>  cid;
     //https://www.javadoc.io/doc/com.github.javaparser/javaparser-core/latest/index.html
     //Declared types
     //https://www.javadoc.io/doc/com.github.javaparser/javaparser-core/latest/com/github/javaparser/ast/visitor/VoidVisitorAdapter.html
@@ -79,6 +82,9 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         super.visit(cid, arg);
         String className = cid.getNameAsString();
         Boolean IsInterface = cid.isInterface();
+
+        Integer count =  cid.getEnd().get().line - cid.getBegin().get().line ;
+
 //get the links of the class
         List<String> links = new ArrayList<String>();
         NodeList<ClassOrInterfaceType> extendedTypes = cid.getExtendedTypes();
@@ -91,9 +97,11 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         for(ClassOrInterfaceType et: extendedTypes){
             links.add(et.getName().getIdentifier());
         }
+        
         arg.setClassName(className);
         arg.setInterface(IsInterface);
         arg.setLinks(links);
+        arg.setLineCount(count);
 
         System.out.println("ImportDeclaration Printed: " + className);
     }
