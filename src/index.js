@@ -13,12 +13,18 @@ const getRepoURL = () => {
   });
 };
 
+
 const main = async () => {
   let repoURL, res, testData;
+  getHashMap();
   try {
+    console.log(10);
+
     /* To get data from backend */
+
     // repoURL = await getRepoURL();
     // res = await getData(repoURL);
+
   } catch (err) {
     console.log(err);
   }
@@ -30,6 +36,5 @@ const main = async () => {
   console.log(testData);
   visualize(testData);
 };
-
 main();
 
