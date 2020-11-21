@@ -2,6 +2,7 @@ const httpRequest = async (url, options = {}) => {
   Object.assign(options, {
     headers: {
       'Accept': 'application/vnd.github.v3+json',
+      'Authorization': 'token  6dac0a9d5dffdbcbc95afb1be37b579e98ccf8a6',
     },
   });
 
