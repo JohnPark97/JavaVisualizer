@@ -1,4 +1,3 @@
-
 const host = 'https://api.github.com';
 // const repoOwnerEndpoint = '/repos/{owner}/{repo}';
 const repoOwnerEndpoint = '/repos/dwmkerr/spaceinvaders'; // as an example
@@ -6,19 +5,32 @@ const repoOwnerEndpoint = '/repos/dwmkerr/spaceinvaders'; // as an example
 const backendHost = 'http://localhost:8000'
 const testEndpoint = '/data';
 
-var hash = new Object();
+const extensions = ["js", "css", "java"];
 
+let hash = new Object();
 
 const getData = async (repoURL) => {
   const url = backendHost + testEndpoint;
-  // TODO use the repoURL somehow
   console.log(url);
+  console.log(repoURL);
 
+  let map = getHashMap(repoURL);
+
+  // send github url to backend
   const res = await httpRequest(url, {
-    method: 'GET',
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: repoURL // body data type must match "Content-Type" header
   });
 
+
+  console.log("map");
+  console.log(map);
+
   return res;
+
 };
 
 async function inputHashMap(listOfFiles) {
@@ -28,25 +40,20 @@ async function inputHashMap(listOfFiles) {
       const nextListOfFiles = await httpRequest(url, {
         method: 'GET',
       });
-
       inputHashMap(nextListOfFiles);
-    } else {
+    } else if (element['type'] === 'file' && isCodeFile(element['name'])) {
       hash[element['name']] = element;
     }
   }
 }
 
-const getHashMap = async () => {
+const getHashMap = async (url) => {
 
-  hash = new Object();
+  const repoUrl = url + '/contents/';
 
-  const url = host + repoOwnerEndpoint + '/contents/';
-  console.log(url);
-
-  const listOfFiles = await httpRequest(url, {
+  const listOfFiles = await httpRequest(repoUrl, {
     method: 'GET',
   });
-
 
   await inputHashMap(listOfFiles);
 
@@ -54,6 +61,18 @@ const getHashMap = async () => {
   console.log(hash);
 
   return hash;
+}
+
+const isCodeFile = (name) => {
+  let extension = name.split(".");
+  extension = extension[extension.length - 1];
+
+  if (extensions.includes(extension)) {
+    return true;
+  } else {
+    return false;
+  }
+
 }
 
 const formatData = (data) => {

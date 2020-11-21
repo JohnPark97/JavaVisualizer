@@ -6,24 +6,20 @@ const getRepoURL = () => {
     $('#submit').on('click', () => {
       repoURL = $('#repo-link').val();
       if (!repoURL) return window.alert('Please enter a Github repo');
-      
+
       // validate URL?
       return resolve(repoURL);
     });
   });
 };
 
-
 const main = async () => {
   let repoURL, res, testData;
-  getHashMap();
   try {
-    console.log(10);
-
     /* To get data from backend */
 
-    // repoURL = await getRepoURL();
-    // res = await getData(repoURL);
+    repoURL = await getRepoURL();
+    res = await getData(repoURL);
 
   } catch (err) {
     console.log(err);
@@ -36,5 +32,5 @@ const main = async () => {
   console.log(testData);
   visualize(testData);
 };
-main();
 
+main();
