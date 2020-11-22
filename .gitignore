@@ -1,2 +1,5 @@
 .idea/
 out/
+./CPSC410.iml
+*.class
+

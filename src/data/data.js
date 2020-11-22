@@ -1,6 +1,9 @@
 const host = 'https://api.github.com';
 // const repoOwnerEndpoint = '/repos/{owner}/{repo}';
-const repoOwnerEndpoint = '/repos/dwmkerr/spaceinvaders'; // as an example
+// '/repos/dwmkerr/spaceinvaders'; // as an example
+const repoFilesEndpoint = (owner, repo) => {
+  return `/repos/${owner}/${repo}/contents/`;
+};
 
 const backendHost = 'http://localhost:8000'
 const testEndpoint = '/data';
@@ -27,7 +30,7 @@ const getData = async (repoURL) => {
 
 
   console.log("map");
-  console.log(map);
+  console.log(await map);
 
   return res;
 
@@ -47,9 +50,24 @@ async function inputHashMap(listOfFiles) {
   }
 }
 
+const getOwnerAndRepo = (url) => {
+  const urlParts = url.split('/');
+  const i = urlParts.findIndex(e => e == 'github.com')
+  return {
+    owner: urlParts[i + 1],
+    repo: urlParts[i + 2],
+  };
+};
+
 const getHashMap = async (url) => {
 
-  const repoUrl = url + '/contents/';
+  const {
+    owner,
+    repo,
+  } = getOwnerAndRepo(url);
+
+  const repoUrl = host + repoFilesEndpoint(owner, repo);
+  console.log(repoUrl);
 
   const listOfFiles = await httpRequest(repoUrl, {
     method: 'GET',

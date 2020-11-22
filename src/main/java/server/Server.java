@@ -16,11 +16,13 @@ import java.util.Scanner;
 public class Server {
 
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        int port = 8000;
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         // Endpoint GET /data
         server.createContext("/data", new MyHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
+        System.out.println("Server running on port: " + port);
     }
 
     static class MyHandler implements HttpHandler {
@@ -37,6 +39,7 @@ public class Server {
                 }
             }
             String gitUrl = textBuilder.toString();
+            System.out.println(gitUrl);
 
             // Test response in JSON
             String response = "{ \"a\" : 1 }";
