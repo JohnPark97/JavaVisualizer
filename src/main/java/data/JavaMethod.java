@@ -33,6 +33,14 @@ public class JavaMethod {
         this.name = name;
     }
 
+    public Boolean getConstructor() {
+        return isConstructor;
+    }
+
+    public void setConstructor(Boolean constructor) {
+        isConstructor = constructor;
+    }
+
     public List<String> getModifiers() {
         return modifiers;
     }
