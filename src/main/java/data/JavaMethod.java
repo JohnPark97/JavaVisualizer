@@ -8,13 +8,15 @@ public class JavaMethod {
     Boolean isConstructor;
     List<String> modifiers;
     List<JavaParameter> parameterList;
+    Integer LineCount;
 
-    public JavaMethod(String returnType, String name,Boolean b, List<String> modifiers, List<JavaParameter> parameterList) {
+    public JavaMethod(String returnType, String name,Boolean b, List<String> modifiers, List<JavaParameter> parameterList,Integer lc) {
         this.returnType = returnType;
         this.name = name;
         this.isConstructor = b;
         this.modifiers = modifiers;
         this.parameterList = parameterList;
+        this.LineCount = lc;
     }
 
     public String getReturnType() {
@@ -23,6 +25,14 @@ public class JavaMethod {
 
     public void setReturnType(String returnType) {
         this.returnType = returnType;
+    }
+
+    public Integer getLineCount() {
+        return LineCount;
+    }
+
+    public void setLineCount(Integer lineCount) {
+        LineCount = lineCount;
     }
 
     public String getName() {

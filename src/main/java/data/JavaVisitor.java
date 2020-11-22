@@ -27,6 +27,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         String returnType = md.getTypeAsString();
         String name = md.getNameAsString();
         List<String> listofModifiers = new ArrayList<String>();
+        Integer lineCount = md.getEnd().get().line - md.getBegin().get().line;
 
         NodeList<Modifier> modifiers = md.getModifiers();
         for(Modifier m: modifiers){
@@ -40,7 +41,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             JavaParameter parameter = new JavaParameter(type,pname);
             listofParameters.add(parameter);
         }
-        JavaMethod method = new JavaMethod(returnType,name,false,listofModifiers,listofParameters);
+        JavaMethod method = new JavaMethod(returnType,name,false,listofModifiers,listofParameters, lineCount);
         arg.getMethods().add(method);
         System.out.println("Method Name Printed: " + md.getName());
         }
@@ -92,6 +93,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         String name = cd.getNameAsString();
         String returnType = "";
         List<String> listofModifiers = new ArrayList<String>();
+        Integer lineCount = cd.getEnd().get().line - cd.getBegin().get().line;
 
         NodeList<Modifier> modifiers = cd.getModifiers();
         for(Modifier m: modifiers){
@@ -105,7 +107,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             JavaParameter parameter = new JavaParameter(type,pname);
             listofParameters.add(parameter);
         }
-        JavaMethod method = new JavaMethod(returnType,name,true,listofModifiers,listofParameters);
+        JavaMethod method = new JavaMethod(returnType,name,true,listofModifiers,listofParameters,lineCount);
         arg.getMethods().add(method);
 
         System.out.println("Constructor Name Printed: " + cd.getName());

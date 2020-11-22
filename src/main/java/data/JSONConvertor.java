@@ -74,6 +74,7 @@ public class JSONConvertor {
         for (JavaParameter p : jm.getParameterList()) {
             parameters.add(JSONParameter(p));
         }
+        jsonMethod.put("lineCount", jm.getLineCount());
         jsonMethod.put("parameters", parameters);
         return jsonMethod;
     }
