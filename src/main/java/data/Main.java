@@ -12,6 +12,7 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.utils.SourceRoot;
 import com.sun.jdi.InterfaceType;
+import javassist.compiler.ast.Variable;
 import javassist.compiler.ast.Visitor;
 import org.checkerframework.checker.units.qual.A;
 import org.json.simple.JSONArray;
@@ -54,13 +55,19 @@ public class Main {
         for(CompilationUnit cu : compilationUnits){
             //              System.out.println(cu);
             //visit the ast structure and get the info that we want
-            JavaClass javaClass = new JavaClass(null, false, false,
-                                                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 0);
+            JavaClass javaClass = new JavaClass();
+            javaClass.setDependencies(new ArrayList<String>());
+            javaClass.setImports(new ArrayList<String>());
+            javaClass.setGlobalVariables(new ArrayList<JavaVariable>());
+            javaClass.setMethods(new ArrayList<JavaMethod>());
+            javaClass.setEnum(false);
             JavaVisitor visitor = new JavaVisitor();
             cu.accept(visitor,javaClass);
             //add it to the list of java classes
             ListOfJavaClasses.add(javaClass);
         }
+        //Checking the dependencies
+        checkDependencies(ListOfJavaClasses);
         JSONObject jsonProject =  createJSON(ListOfJavaClasses);
 
 
@@ -71,6 +78,24 @@ public class Main {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public static void checkDependencies(List<JavaClass> list){
+        for(JavaClass jc: list){
+            List<String> dependencies = new ArrayList<String>();
+            for(int i = 0; i < jc.getDependencies().size(); i++) {
+                Boolean classExist = false;
+                for (JavaClass j : list) {
+                    if (jc.getDependencies().get(i).contains(j.getClassName()) ||
+                            jc.getDependencies().get(i).equals(j.getClassName())) {
+                        classExist = true;
+                    }
+                }
+                if(classExist.equals(true)){
+                    dependencies.add(jc.getDependencies().get(i));
+                }
+            }
+            jc.setDependencies(dependencies);
         }
     }
 
@@ -113,7 +138,7 @@ public class Main {
     }
     public static JSONObject JSONDependency(JavaClass jc){
         JSONObject jsonDep = new JSONObject();
-        jsonDep.put(jc.ClassName,jc.Links);
+        //jsonDep.put(jc.ClassName,jc.Links);
         return jsonDep;
     }
 }

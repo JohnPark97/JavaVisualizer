@@ -7,6 +7,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.lang.invoke.MethodHandle;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
-    private Optional<Position>  cid;
     //https://www.javadoc.io/doc/com.github.javaparser/javaparser-core/latest/index.html
     //Declared types
     //https://www.javadoc.io/doc/com.github.javaparser/javaparser-core/latest/com/github/javaparser/ast/visitor/VoidVisitorAdapter.html
@@ -38,12 +38,10 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             String pname = p.getNameAsString();
             String type = p.getTypeAsString();
             JavaParameter parameter = new JavaParameter(type,pname);
-            listofModifiers.add(pname);
+            listofParameters.add(parameter);
         }
-        List<JavaMethod> methodList = arg.getMethods();
-        JavaMethod method = new JavaMethod(returnType,name,listofModifiers,listofParameters);
-        methodList.add(method);
-        arg.setMethods(methodList);
+        JavaMethod method = new JavaMethod(returnType,name,false,listofModifiers,listofParameters);
+        arg.getMethods().add(method);
         System.out.println("Method Name Printed: " + md.getName());
         }
 
@@ -51,19 +49,66 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
     public void visit(FieldDeclaration fd, JavaClass arg) {
         super.visit(fd, arg);
         String type = fd.getVariable(0).getTypeAsString();
-        String name = fd.getVariable(0).getNameAsString();
-        List<String> listofModifiers = new ArrayList<String>();
+        Type varType = fd.getVariable(0).getType();
+        Boolean isPrimitiveType = false;
+            if(varType.isPrimitiveType() || varType.getElementType().asClassOrInterfaceType().getNameAsString().equals("String")){
+                isPrimitiveType = true;
+            }else {
+                Type elementvarType = fd.getVariable(0).getType().getElementType();
 
+                Optional<NodeList<Type>> arguments = elementvarType.asClassOrInterfaceType().getTypeArguments();
+                if(!arguments.isEmpty()){
+                for(int i = 0; i < arguments.get().size();i++) {
+                    if (arguments.get().get(i).isPrimitiveType()
+                            || arguments.get().get(i).asClassOrInterfaceType().getNameAsString().equals("String")) {
+                        isPrimitiveType = true;
+                    }
+                }
+                }
+            }
+            if(!isPrimitiveType){
+                if(!(arg.getDependencies().contains(varType.asString()))) {
+                    arg.getDependencies().add(varType.asString());
+                }
+            }
+        List<String> listofModifiers = new ArrayList<String>();
         NodeList<Modifier> modifiers = fd.getModifiers();
         for(Modifier m: modifiers){
             listofModifiers.add(m.getKeyword().asString());
         }
 
-        JavaVariable var = new JavaVariable(type,name,listofModifiers);
-        List<JavaVariable> variables = arg.getGlobalVariables();
-        variables.add(var);
-        arg.setGlobalVariables(variables);
-        System.out.println("Added variable to list: " + name);
+        NodeList<VariableDeclarator> names = fd.getVariables();
+        for(VariableDeclarator n: names){
+            String name = n.getNameAsString();
+            JavaVariable var = new JavaVariable(type,name,listofModifiers);
+            arg.getGlobalVariables().add(var);
+            System.out.println("Added variable to list: " + name);
+        }
+    }
+
+    @Override
+    public void visit(ConstructorDeclaration cd, JavaClass arg){
+        super.visit(cd, arg);
+        String name = cd.getNameAsString();
+        String returnType = "";
+        List<String> listofModifiers = new ArrayList<String>();
+
+        NodeList<Modifier> modifiers = cd.getModifiers();
+        for(Modifier m: modifiers){
+            listofModifiers.add(m.getKeyword().asString());
+        }
+        List<JavaParameter> listofParameters = new ArrayList<JavaParameter>();
+        NodeList<Parameter> parameters = cd.getParameters();
+        for(com.github.javaparser.ast.body.Parameter p: parameters){
+            String pname = p.getNameAsString();
+            String type = p.getTypeAsString();
+            JavaParameter parameter = new JavaParameter(type,pname);
+            listofParameters.add(parameter);
+        }
+        JavaMethod method = new JavaMethod(returnType,name,true,listofModifiers,listofParameters);
+        arg.getMethods().add(method);
+
+        System.out.println("Constructor Name Printed: " + cd.getName());
     }
 
     @Override
@@ -80,9 +125,16 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         }
 
         arg.setClassName(EnumName);
-        arg.setLinks(links);
         arg.setLineCount(count);
         System.out.println("EnumDeclaration Printed: " + ed.getName());
+    }
+
+    @Override
+    public void visit(ImportDeclaration id, JavaClass  arg) {
+        super.visit(id, arg);
+        String name = id.getNameAsString();
+        arg.getImports().add(name);
+        System.out.println("ImportDeclaration Printed: " + id.getNameAsString());
     }
 
 
@@ -96,24 +148,25 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         Integer count =  cid.getEnd().get().line - cid.getBegin().get().line ;
 
 //get the links of the class
-        List<String> links = new ArrayList<String>();
+        List<String> extension= new ArrayList<String>();
+        List<String> implement= new ArrayList<String>();
         NodeList<ClassOrInterfaceType> extendedTypes = cid.getExtendedTypes();
         NodeList<ClassOrInterfaceType> implementedTypes = cid.getImplementedTypes();
 
         for(ClassOrInterfaceType it: implementedTypes){
-            links.add(it.getName().getIdentifier());
+            extension.add(it.getName().getIdentifier());
         }
 
         for(ClassOrInterfaceType et: extendedTypes){
-            links.add(et.getName().getIdentifier());
+            implement.add(et.getName().getIdentifier());
         }
-        
         arg.setClassName(className);
         arg.setInterface(IsInterface);
-        arg.setLinks(links);
         arg.setLineCount(count);
+        arg.setExtensions(extension);
+        arg.setImplements(implement);
 
-        System.out.println("ImportDeclaration Printed: " + className);
+        System.out.println("ClassDeclaration Printed: " + className);
     }
 
 

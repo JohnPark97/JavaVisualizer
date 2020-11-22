@@ -15,18 +15,12 @@ public class JavaClass {
     Integer LineCount;
     List<JavaVariable> GlobalVariables;
     List<JavaMethod> Methods;
-    List<String> Links;
+    List<String> Extensions;
+    List<String> Implements;
+    List<String> Dependencies;
+    List<String> Imports;
 
-    public JavaClass(String cn , boolean i,boolean e, List<JavaVariable> gv, List<JavaMethod> m, List<String> l, Integer count){
-        ClassName = cn;
-        Interface = i;
-        IsEnum = e;
-        LineCount = count;
-        GlobalVariables = gv;
-        Methods  = m;
-        Links = l;
-
-    }
+    public JavaClass(){}
 
     public String getClassName() {
         return ClassName;
@@ -44,8 +38,36 @@ public class JavaClass {
         return Methods;
     }
 
-    public List<String> getLinks() {
-        return Links;
+    public List<String> getExtensions() {
+        return Extensions;
+    }
+
+    public void setExtensions(List<String> extensions) {
+        Extensions = extensions;
+    }
+
+    public List<String> getImplements() {
+        return Implements;
+    }
+
+    public void setImplements(List<String> anImplements) {
+        Implements = anImplements;
+    }
+
+    public List<String> getImports() {
+        return Imports;
+    }
+
+    public void setImports(List<String> imports) {
+        Imports = imports;
+    }
+
+    public List<String> getDependencies() {
+        return Dependencies;
+    }
+
+    public void setDependencies(List<String> dependencies) {
+        Dependencies = dependencies;
     }
 
     public void setClassName(String className) {
@@ -80,8 +102,5 @@ public class JavaClass {
         Methods = methods;
     }
 
-    public void setLinks(List<String> links) {
-        Links = links;
-    }
 
 }

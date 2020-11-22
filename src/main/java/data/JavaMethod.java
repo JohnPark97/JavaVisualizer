@@ -5,12 +5,14 @@ import java.util.List;
 public class JavaMethod {
     String returnType;
     String name;
+    Boolean isConstructor;
     List<String> modifiers;
     List<JavaParameter> parameterList;
 
-    public JavaMethod(String returnType, String name, List<String> modifiers, List<JavaParameter> parameterList) {
+    public JavaMethod(String returnType, String name,Boolean b, List<String> modifiers, List<JavaParameter> parameterList) {
         this.returnType = returnType;
         this.name = name;
+        this.isConstructor = b;
         this.modifiers = modifiers;
         this.parameterList = parameterList;
     }
