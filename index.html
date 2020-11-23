@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Team 6 - Project 2</title>
+  <style type="text/css">
+    .link {
+      stroke: black;
+      stroke-opacity: .6;
+      stroke-width: 3;
+    }
+
+    #viz-container {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Java Code Dependency Viz</h1>
+  <br>
+  <h3>Enter Github repo link:
+    <textarea id=repo-link></textarea>
+    <button id=submit> GO! </button>
+  </h3>
+
+  <div id="viz-container">
+    <svg id="viz"></svg>
+    <svg id="detail"></svg>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="src/ui/town.js"></script>
+  <script src="src/ui/detail.js"></script>
+  <script src="src/ui/viz.js"></script>
+  <script src="src/data/http.js"></script>
+  <script src="src/data/data.js"></script>
+  <script src="src/index.js"></script>
+</body>
+
+</html>

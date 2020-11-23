@@ -1,0 +1,9 @@
+{
+  "name": "cpsc410_project2_team6",
+  "version": "1.0.0",
+  "dependencies": {
+    "@octokit/core": "^3.2.1",
+    "@octokit/rest": "^18.0.9",
+    "requirejs": "^2.3.6"
+  }
+}
