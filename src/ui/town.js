@@ -42,7 +42,7 @@ class Town {
     let vis = this;
 
     // TODO eventually use an actual scale
-    const linecountScale = (d) => 15 + Math.sqrt(d.lineCount);
+    const linecountScale = (d) => 15 + Math.sqrt(d.line_count);
 
     // vis.svg.append('defs').append('marker')
     //   .attr('id', 'arrowhead')
@@ -61,7 +61,7 @@ class Town {
     //   .style('stroke', 'none');
 
     vis.simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id((d) => d.className).distance(150).strength(1)) // TODO make a scale for distance
+      .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(vis.config.containerWidth / 2, vis.config.containerHeight / 2))
       .force('collision', d3.forceCollide().radius(linecountScale))
@@ -115,7 +115,7 @@ class Town {
         }))
       .on('click', d => {
         vis.detail.selectedClass =
-          vis.detail.selectedClass = d.className;
+          vis.detail.selectedClass = d.name;
         vis.detail.update();
       });
 
@@ -157,7 +157,7 @@ class Town {
 
     vis.nodes.append('rect')
       .attr('width', 12)
-      .attr('height', d => d.className.length * 9)
+      .attr('height', d => d.name.length * 9)
       .attr('transform', d => `translate(0, ${linecountScale(d) + 12}) rotate(-90)`)
       .style('fill', 'white')
       .style('opacity', 0.8)
@@ -165,7 +165,7 @@ class Town {
       .attr('class', 'house-label')
       .attr('dy', d => linecountScale(d) + 12) // use font-size instead of 10 for more dynamic
       .attr('font-weight', 'bold')
-      .text(d => d.className);
+      .text(d => d.name);
 
     vis.simulation
       .force('link')

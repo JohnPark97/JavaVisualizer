@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import data.JavaParser;
 import net.lingala.zip4j.ZipFile;
 
 import java.io.*;
@@ -78,10 +79,13 @@ public class Server {
             new ZipFile(Paths.get(zipPath).toFile())
                     .extractAll(Paths.get(filePath).toString());
 
-            // TODO Run it through the parser
+            // Run it through the parser
+            JavaParser jp = new JavaParser();
+            jp.parse();
 
             // Test response in JSON
-            String response = "{ \"a\" : 1 }";
+            String jsonFilePath = "assets/project.json";
+            String response = new String(Files.readAllBytes(Paths.get(jsonFilePath)));
 
             Headers responseHeaders = exchange.getResponseHeaders();
             // reply with JSON

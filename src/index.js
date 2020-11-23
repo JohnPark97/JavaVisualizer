@@ -1,4 +1,5 @@
-const testDataFilePath = '../assets/test_data.json';
+const testDataFilePath = '../assets/project.json';
+// const testDataFilePath = '../assets/test_data.json';
 
 const getRepoURL = () => {
   return new Promise((resolve) => {
@@ -31,9 +32,9 @@ const main = async () => {
     // res = await getData(repoURL);
     
     // TODO figure out a way to combine zipping and URL
-    file = await handleFileSubmission();
-    zip = await readFile(file);
-    res = await postZip(zip);
+    // file = await handleFileSubmission();
+    // zip = await readFile(file);
+    // res = await postZip(zip);
 
   } catch (err) {
     console.log(err);

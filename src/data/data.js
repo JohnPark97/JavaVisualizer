@@ -108,29 +108,16 @@ const postZip = async (zip) => {
 }
 
 const formatData = (data) => {
-  let classes = []
   let links = [];
-  data.classes.forEach((klass) => {
-    Object.entries(klass).forEach((prop) => {
-      classes.push({
-        className: prop[0],
-        lineCount: prop[1],
-      });
-    });
-  });
 
   data.links.forEach((link) => {
-    Object.entries(link).forEach((relationship) => {
-      relationship[1].forEach((target) => {
+      link.Dependencies.forEach((dependency) => {
         links.push({
-          source: relationship[0],
-          target,
+          source: link.Class,
+          target: dependency,
         });
       });
-    });
   });
-  console.log(classes)
-  console.log(links)
 
-  return { classes, links };
+  return { classes: data.classes, links };
 }
