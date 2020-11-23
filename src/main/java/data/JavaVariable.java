@@ -8,9 +8,9 @@ public class JavaVariable {
     List<String> Modifiers;
 
     public JavaVariable(String t, String n, List<String> modifiers){
-        type = t;
-        Name = n;
-        Modifiers = modifiers;
+        this.type = t;
+        this.Name = n;
+        this.Modifiers = modifiers;
     }
 
     public String getType() {
