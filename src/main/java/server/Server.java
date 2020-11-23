@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Server {
-
     public static void main(String[] args) throws Exception {
         int port = 8000;
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -26,6 +25,9 @@ public class Server {
     }
 
     static class MyHandler implements HttpHandler {
+        private final String ASSETSPATH= "assets/";
+        private final String PROJECT_TO_PARSE = "project_to_parse/";
+
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -45,7 +47,9 @@ public class Server {
             downloadUrls = parseListFromServer(downloadUrlString);
 
             try {
-                download();
+                for (String url: downloadUrls) {
+                    download(url);
+                }
             } catch (Throwable e) {
                 System.out.println("Error while downloading");
             }
@@ -65,7 +69,7 @@ public class Server {
             os.close();
         }
 
-        private static boolean isRedirected( Map<String, List<String>> header ) {
+        private boolean isRedirected( Map<String, List<String>> header ) {
             for( String hv : header.get( null )) {
                 if(   hv.contains( " 301 " )
                         || hv.contains( " 302 " )) return true;
@@ -73,10 +77,8 @@ public class Server {
             return false;
         }
 
-        private static void download() throws Throwable {
-            String link =
-                    "https://raw.githubusercontent.com/dwmkerr/spaceinvaders/master/js/spaceinvaders.js";
-            String            fileName = "spaceinvaders.js";
+        private void download(String link) throws Throwable {
+            String            fileName = getFileName(link);
             URL               url  = new URL( link );
             HttpURLConnection http = (HttpURLConnection)url.openConnection();
             Map< String, List< String >> header = http.getHeaderFields();
@@ -89,7 +91,9 @@ public class Server {
             InputStream  input  = http.getInputStream();
             byte[]       buffer = new byte[4096];
             int          n      = -1;
-            OutputStream output = new FileOutputStream( new File( fileName ));
+
+            String filePath = ASSETSPATH + PROJECT_TO_PARSE;
+            OutputStream output = new FileOutputStream( new File( filePath + fileName ));
             while ((n = input.read(buffer)) != -1) {
                 output.write( buffer, 0, n );
             }
@@ -99,6 +103,13 @@ public class Server {
         private List<String> parseListFromServer(String str) {
             List<String> returnedList = Arrays.asList(str.split(","));
             return returnedList;
+        }
+        private String getFileName(String link) {
+            List<String> splitedUrl = Arrays.asList(link.split("/"));
+            String filename = splitedUrl.get(splitedUrl.size() - 1);
+
+            return filename;
+
         }
         }
     }
