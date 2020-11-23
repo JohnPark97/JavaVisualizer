@@ -1,16 +1,15 @@
 const host = 'https://api.github.com';
-// const repoOwnerEndpoint = '/repos/{owner}/{repo}';
-// '/repos/dwmkerr/spaceinvaders'; // as an example
-const repoFilesEndpoint = (owner, repo) => {
-  return `/repos/${owner}/${repo}/contents/`;
-};
-
-const backendHost = 'http://localhost:8000'
+const backendHost = 'http://localhost:8000';
 const testEndpoint = '/data';
+const dataFromZipEndpoint = '/dataFromZip';
 
 const extensions = ["js", "css", "java"];
 
 let hash = new Object();
+
+const repoFilesEndpoint = (owner, repo) => {
+  return `/repos/${owner}/${repo}/contents/`;
+};
 
 const getData = async (repoURL) => {
   const url = backendHost + testEndpoint;
@@ -85,12 +84,27 @@ const isCodeFile = (name) => {
   let extension = name.split(".");
   extension = extension[extension.length - 1];
 
-  if (extensions.includes(extension)) {
-    return true;
-  } else {
-    return false;
-  }
+  return extensions.includes(extension);
+}
 
+const readFile = async (zip) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      const res = event.target.result;
+      resolve(res);
+    });
+    reader.readAsArrayBuffer(zip);
+  });
+}
+
+const postZip = async (zip) => {
+  const url = backendHost + dataFromZipEndpoint;
+
+  return await httpRequest(url, {
+    method: 'POST',
+    body: zip,
+  });
 }
 
 const formatData = (data) => {

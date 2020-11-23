@@ -20,10 +20,19 @@
 <body>
   <h1>Java Code Dependency Viz</h1>
   <br>
-  <h3>Enter Github repo link:
-    <textarea id=repo-link></textarea>
-    <button id=submit> GO! </button>
-  </h3>
+  <div>
+    <h3>Enter Github repo link:
+      <textarea id=repo-link></textarea>
+      <button id=submit> GO! </button>
+    </h3>
+  </div>
+
+  <div>
+    <h3>Submit a ZIP:
+      <input type=file id=file-selector accept='.zip'></input>
+    </h3>
+    
+  </div>
 
   <div id="viz-container">
     <svg id="viz"></svg>

@@ -1,5 +1,6 @@
 .idea/
 out/
 ./CPSC410.iml
-*.class
-
+**.class
+node_modules/
+target/
