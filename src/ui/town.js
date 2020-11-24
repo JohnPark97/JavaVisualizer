@@ -114,9 +114,16 @@ class Town {
           d.fx = null;
           d.fy = null;
         }))
-      .on('click', d => {
-        vis.detail.selectedClass =
-          vis.detail.selectedClass = d.name;
+      // .on('click', d => {
+      //   vis.detail.selectedClass = d.name;
+      //   vis.detail.update();
+      // })
+      .on('mouseover', d => {
+        vis.detail.hoverClass = d.name;
+        vis.detail.update();
+      })
+      .on('mouseout', d => {
+        vis.detail.hoverClass = null;
         vis.detail.update();
       });
 
