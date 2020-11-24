@@ -12,6 +12,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,27 +52,9 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         super.visit(fd, arg);
         String type = fd.getVariable(0).getTypeAsString();
         Type varType = fd.getVariable(0).getType();
-        Boolean isPrimitiveType = false;
-            if(varType.isPrimitiveType() || varType.getElementType().asClassOrInterfaceType().getNameAsString().equals("String")){
-                isPrimitiveType = true;
-            }else {
-                Type elementvarType = fd.getVariable(0).getType().getElementType();
 
-                Optional<NodeList<Type>> arguments = elementvarType.asClassOrInterfaceType().getTypeArguments();
-                if(!arguments.isEmpty()){
-                for(int i = 0; i < arguments.get().size();i++) {
-                    if (arguments.get().get(i).isPrimitiveType()
-                            || arguments.get().get(i).asClassOrInterfaceType().getNameAsString().equals("String")) {
-                        isPrimitiveType = true;
-                    }
-                }
-                }
-            }
-            if(!isPrimitiveType){
-                if(!(arg.getDependencies().contains(varType.asString()))) {
-                    arg.getDependencies().add(varType.asString());
-                }
-            }
+        setDependencies(varType,arg);
+
         List<String> listofModifiers = new ArrayList<String>();
         NodeList<Modifier> modifiers = fd.getModifiers();
         for(Modifier m: modifiers){
@@ -84,6 +67,41 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             JavaVariable var = new JavaVariable(type,name,listofModifiers);
             arg.getGlobalVariables().add(var);
             System.out.println("Added variable to list: " + name);
+        }
+    }
+
+    public void setDependencies(Type t, JavaClass arg){
+        System.out.println("Checking dependencies");
+        String DependencyName = t.asString();
+        JavaDependency jd = new JavaDependency(DependencyName,new HashMap<String, List<JavaCollection>>(),new ArrayList<String>());
+        if(!t.isPrimitiveType()) {
+            getCollection(t, jd);
+            arg.getDependencies().add(jd);
+            System.out.println("Finishes checking dependencies");
+        }
+    }
+
+    public void getCollection(Type t,JavaDependency jd){
+        Type type = t;
+        Type elementType = t.getElementType();
+        while(!(elementType.asString()).equals(type.asString())){
+            List<JavaCollection> innerBrackets = new ArrayList<JavaCollection>();
+            innerBrackets.add(new JavaCollection(type.asString(), elementType.asString()));
+            jd.getCollection().put(type.asString(),innerBrackets);
+            type = elementType;
+            elementType = type.getElementType();
+        }
+            Optional<NodeList<Type>> arguments = type.asClassOrInterfaceType().getTypeArguments();
+        if(!arguments.isEmpty()){
+            List<JavaCollection> innerTypes = new ArrayList<JavaCollection>();
+            for(int i = 0; i < arguments.get().size();i++) {
+                Type innertype = arguments.get().get(i);
+                innerTypes.add(new JavaCollection(type.asClassOrInterfaceType().getNameAsString(),innertype.asString()));
+                getCollection(innertype,jd);
+            }
+            jd.getCollection().put(t.asString(),innerTypes);
+        }else {
+            jd.getClassNames().add(t.asString());
         }
     }
 

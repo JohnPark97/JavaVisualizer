@@ -17,7 +17,7 @@ public class JavaClass {
     List<JavaMethod> Methods;
     List<String> Extensions;
     List<String> Implements;
-    List<String> Dependencies;
+    List<JavaDependency> Dependencies;
     List<String> Imports;
 
     public JavaClass(){}
@@ -62,11 +62,11 @@ public class JavaClass {
         Imports = imports;
     }
 
-    public List<String> getDependencies() {
+    public List<JavaDependency> getDependencies() {
         return Dependencies;
     }
 
-    public void setDependencies(List<String> dependencies) {
+    public void setDependencies(List<JavaDependency> dependencies) {
         Dependencies = dependencies;
     }
 

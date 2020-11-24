@@ -3,7 +3,9 @@ package data;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class JSONConvertor {
 
@@ -60,8 +62,39 @@ public class JSONConvertor {
         jsonDep.put("Class",jc.getClassName());
         jsonDep.put("Implementations", jc.getImplements());
         jsonDep.put("Extensions", jc.getExtensions());
-        jsonDep.put("Dependencies", jc.getDependencies());
+        List<JSONObject> jsonDeps = new ArrayList<JSONObject>();
+        for(JavaDependency jd: jc.getDependencies()){
+            jsonDeps.add(JSONVariableDependency(jd));
+        }
+        jsonDep.put("Dependencies", jsonDeps);
         return jsonDep;
+    }
+
+    public static JSONObject JSONVariableDependency(JavaDependency jd){
+        JSONObject jsonVariableDep = new JSONObject();
+        jsonVariableDep.put("ClassNames",jd.getClassNames());
+        jsonVariableDep.put("DependencyName", jd.getDependencyName());
+        List<JSONObject> CollectionMap = new ArrayList<JSONObject>();
+        HashMap<String,List<JavaCollection>> Collection = jd.getCollection();
+        Set<String> keys = Collection.keySet();
+         for(String k: keys){
+             List<JSONObject> CollectionList = new ArrayList<JSONObject>();
+             for(JavaCollection jc :Collection.get(k)){
+                 CollectionList.add(JSONCollection(jc));
+             }
+             JSONObject CollectionObject = new JSONObject();
+             CollectionObject.put(k,CollectionList);
+             CollectionMap.add(CollectionObject);
+        }
+        jsonVariableDep.put("Collection",CollectionMap);
+
+        return jsonVariableDep;
+    }
+    public static JSONObject JSONCollection(JavaCollection jc){
+        JSONObject jsonCollection = new JSONObject();
+        jsonCollection.put("Collection", jc.getCollection());
+        jsonCollection.put("Object", jc.getObject());
+        return jsonCollection;
     }
 
     public static JSONObject JSONMethod(JavaMethod jm) {

@@ -44,7 +44,7 @@ public class JavaParser {
             //              System.out.println(cu);
             //visit the ast structure and get the info that we want
             JavaClass javaClass = new JavaClass();
-            javaClass.setDependencies(new ArrayList<String>());
+            javaClass.setDependencies(new ArrayList<JavaDependency>());
             javaClass.setImports(new ArrayList<String>());
             javaClass.setGlobalVariables(new ArrayList<JavaVariable>());
             javaClass.setMethods(new ArrayList<JavaMethod>());
@@ -72,13 +72,14 @@ public class JavaParser {
 
     public static void checkDependencies(List<JavaClass> list) {
         for (JavaClass jc : list) {
-            List<String> dependencies = new ArrayList<String>();
+            List<JavaDependency> dependencies = new ArrayList<JavaDependency>();
             for (int i = 0; i < jc.getDependencies().size(); i++) {
                 Boolean classExist = false;
                 for (JavaClass j : list) {
-                    if (jc.getDependencies().get(i).contains(j.getClassName()) ||
-                            jc.getDependencies().get(i).equals(j.getClassName())) {
-                        classExist = true;
+                    for(String s: jc.getDependencies().get(i).getClassNames()){
+                        if (s.contains(j.getClassName())) {
+                            classExist = true;
+                        }
                     }
                 }
                 if (classExist.equals(true)) {
