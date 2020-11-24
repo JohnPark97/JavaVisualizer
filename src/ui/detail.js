@@ -68,8 +68,8 @@ class Detail {
     const properties = {
       name: 'Class',
       line_count: 'Line count',
-      IsEnumeration: 'Enum',
-      IsInterface: 'Interface',
+      IsEnumeration: 'Is Enum?',
+      IsInterface: 'Is Interface?',
       imports: 'Imports', 
       methods: 'Methods',
       variables: 'Variables'

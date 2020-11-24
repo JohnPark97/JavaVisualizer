@@ -131,7 +131,7 @@ class Town {
     const trianglePoints = (d) => `0 0, ${linecountScale(d)} 0, ${linecountScale(d) / 2} -${linecountScale(d) / 2} ${linecountScale(d) / 2}, -${linecountScale(d) / 2} 0 0`;
     vis.nodes.append('polyline')
       .attr('points', trianglePoints)
-      .style('fill', 'red')
+      .style('fill', (d) => d.IsEnumeration ? 'green' : d.IsInterface ? 'blue' : 'red')
       .style('stroke', 'black');
 
     // Door
