@@ -77,25 +77,83 @@ class Detail {
         .append('foreignObject')
         .attr('class', 'detail')
         .attr('width', vis.config.containerWidth)
-        .attr('height', vis.config.containerHeight)
+        .attr('height', vis.config.containerHeight - 35)
         .attr('y', 35)
         .attr('x', 10)
+        .attr('overflow', 'auto')
         .append('xhtml:div')
         .html(vis.getClassPropertyText(klass));
     };
   }
 
   getClassPropertyText(klass) {
+    let vis = this;
     let label = '';
+
     Object.entries(propertiesToViz).forEach((prop, idx) => {
       label += '<p><b>';
+      // Append 'Enum' or 'Interface' to 'Class' as appropriate
       if (prop[0] == 'name' && klass.IsEnumeration) label += 'Enum ';
       if (prop[0] == 'name' && klass.IsInterface) label += 'Interface ';
-      label += `${prop[1]}:</b> ${klass[prop[0]]}`
-      if (!klass[prop[0]] || klass[prop[0]].length < 1) label += 'N/A';
+
+      label += `${prop[1]}:</b>`
+
+      // Return N/A for empty fields
+      if (!klass[prop[0]] || klass[prop[0]].length < 1) label += ' N/A';
+
+      // Deconstruct imports
+      if (prop[1] == 'Imports') label += `${vis.getImportText(klass)}`;
+
+      // Deconstruct methods
+      else if (prop[1] == 'Methods') label += `${vis.getMethodText(klass)}`;
+
+      // Deconstruct variables
+      else if (prop[1] == 'Variables') label += `${vis.getVariablesText(klass)}`;
+
+      // Just print other properties
+      else label += ` ${klass[prop[0]]}`;
+
       label += '</p>';
     });
 
     return label;
   };
+
+  getMethodText(klass) {
+    let text = '';
+
+    Object.entries(klass.methods).forEach((m) => {
+      const method = m[1];
+      text += '</p><p>';
+      text += `${method.modifiers.join(' ')} ${method.name}(`;
+      Object.entries(method.parameters).forEach((p) => {
+        const param = p[1];
+        text += `${param.type} ${param.name} `;
+      });
+      text = `${text.trim()})`;
+    });
+
+    return text;
+  }
+
+  getVariablesText(klass) {
+    let text = '';
+
+    Object.entries(klass.variables).forEach((v) => {
+      const variable = v[1];
+      text += '</p><p>';
+      text += `${variable.modifiers.join(' ')} ${variable.type} ${variable.name}`;
+    });
+
+    return text;
+  }
+
+  getImportText(klass) {
+    let text = '';
+    klass.imports.forEach((i) => {
+      text += `</p><p>${i}`;
+    });
+
+    return text;
+  }
 }
