@@ -66,8 +66,13 @@ class Detail {
     vis.detail.hint.remove();
 
     const properties = {
-      className: 'Class',
-      lineCount: 'Line count',
+      name: 'Class',
+      line_count: 'Line count',
+      IsEnumeration: 'Enum',
+      IsInterface: 'Interface',
+      imports: 'Imports', 
+      methods: 'Methods',
+      variables: 'Variables'
     };
 
     vis.detail.selectAll('.detail').remove();
@@ -82,9 +87,20 @@ class Detail {
         .attr('dy', 30 * (idx))
         .style('font-size', 25)
         .merge(vis.detail.text)
-        .text(d => d.className == vis.selectedClass ? `${prop[1]}: ${d[prop[0]]}` : null)
+        .text(klass => klass.name == vis.selectedClass ? vis.getClassPropertyText(klass, prop) : null)
         .exit().remove();
     });
+  }
 
+  getClassPropertyText(klass, prop) {
+    let label = `${prop[1]}: ${klass[prop[0]]}`;
+    // if (klass.name == 'SpaceInvaderVisitor') {
+    //   console.log(prop[0]);
+    // }
+    // if (prop[0] == 'IsEnumeration' && klass[prop[0]]) label = 'Enum ' + label;
+    // if (prop[0] == 'IsInterface' && klass[prop[0]]) label = 'Interface ' + label;
+
+    // if (!klass[prop[0]]) label = 'N/A' TODO make fields that don't exist for classes show up as N/A
+    return label;
   }
 }

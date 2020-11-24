@@ -1,16 +1,15 @@
 const host = 'https://api.github.com';
-// const repoOwnerEndpoint = '/repos/{owner}/{repo}';
-// '/repos/dwmkerr/spaceinvaders'; // as an example
-const repoFilesEndpoint = (owner, repo) => {
-  return `/repos/${owner}/${repo}/contents/`;
-};
-
-const backendHost = 'http://localhost:8000'
+const backendHost = 'http://localhost:8000';
 const testEndpoint = '/data';
+const dataFromZipEndpoint = '/dataFromZip';
 
 const extensions = ["js", "css", "java"];
 
 let hash = new Object();
+
+const repoFilesEndpoint = (owner, repo) => {
+  return `/repos/${owner}/${repo}/contents/`;
+};
 
 const getData = async (repoURL) => {
   const url = backendHost + testEndpoint;
@@ -85,38 +84,54 @@ const isCodeFile = (name) => {
   let extension = name.split(".");
   extension = extension[extension.length - 1];
 
-  if (extensions.includes(extension)) {
-    return true;
-  } else {
-    return false;
-  }
+  return extensions.includes(extension);
+}
 
+const readFile = async (zip) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      const res = event.target.result;
+      resolve(res);
+    });
+    reader.readAsArrayBuffer(zip);
+  });
+}
+
+const postZip = async (zip) => {
+  const url = backendHost + dataFromZipEndpoint;
+
+  return await httpRequest(url, {
+    method: 'POST',
+    body: zip,
+  });
+}
+
+const formatType = (dependency) => {
+  const collections = dependency.Collection;
+  const name = dependency.DependencyName;
+  if (collections.length < 1) return [];
+  return collections[0][name].Collection;
+
+  // If this needs to be dynamic
+  collections.forEach((c) => {
+    console.log(c[name].Collection);
+  });
+  return ret;
 }
 
 const formatData = (data) => {
-  let classes = []
   let links = [];
-  data.classes.forEach((klass) => {
-    Object.entries(klass).forEach((prop) => {
-      classes.push({
-        className: prop[0],
-        lineCount: prop[1],
-      });
-    });
-  });
 
   data.links.forEach((link) => {
-    Object.entries(link).forEach((relationship) => {
-      relationship[1].forEach((target) => {
+      link.Dependencies.forEach((dependency) => {
         links.push({
-          source: relationship[0],
-          target,
+          source: link.Class,
+          target: dependency.ClassNames[0],
+          type: formatType(dependency),
         });
       });
-    });
   });
-  console.log(classes)
-  console.log(links)
 
-  return { classes, links };
+  return { classes: data.classes, links };
 }
