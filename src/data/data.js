@@ -107,6 +107,19 @@ const postZip = async (zip) => {
   });
 }
 
+const formatType = (dependency) => {
+  const collections = dependency.Collection;
+  const name = dependency.DependencyName;
+  if (collections.length < 1) return [];
+  return collections[0][name].Collection;
+
+  // If this needs to be dynamic
+  collections.forEach((c) => {
+    console.log(c[name].Collection);
+  });
+  return ret;
+}
+
 const formatData = (data) => {
   let links = [];
 
@@ -114,7 +127,8 @@ const formatData = (data) => {
       link.Dependencies.forEach((dependency) => {
         links.push({
           source: link.Class,
-          target: dependency,
+          target: dependency.ClassNames[0],
+          type: formatType(dependency),
         });
       });
   });

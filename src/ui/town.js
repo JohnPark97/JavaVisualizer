@@ -62,8 +62,9 @@ class Town {
 
     vis.simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(vis.config.containerWidth / 2, vis.config.containerHeight / 2))
+      .force('x', d3.forceX(vis.config.containerWidth / 2).strength(0.4))
+      .force('y', d3.forceY(vis.config.containerHeight / 2).strength(0.6))
+      .force('charge', d3.forceManyBody().strength(-7000))
       .force('collision', d3.forceCollide().radius(linecountScale))
       .nodes(vis.data.classes)
       .on('tick', () => {
