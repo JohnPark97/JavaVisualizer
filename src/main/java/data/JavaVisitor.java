@@ -135,7 +135,6 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
     public void visit(EnumDeclaration ed, JavaClass  arg) {
         super.visit(ed, arg);
         String EnumName = ed.getNameAsString();
-        Boolean IsInterface = ed.isEnumDeclaration();
         Integer count =  ed.getEnd().get().line - ed.getBegin().get().line ;
         List<String> links = new ArrayList<String>();
         NodeList<ClassOrInterfaceType> implementedTypes = ed.getImplementedTypes();
@@ -146,6 +145,10 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
 
         arg.setClassName(EnumName);
         arg.setLineCount(count);
+        arg.setEnum(ed.isEnumDeclaration());
+        arg.setInterface(false);
+        arg.setImplements(links);
+        arg.setExtensions(new ArrayList<String>());
         System.out.println("EnumDeclaration Printed: " + ed.getName());
     }
 
