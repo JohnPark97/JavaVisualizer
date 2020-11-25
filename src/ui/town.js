@@ -35,14 +35,23 @@ class Town {
   update() {
     let vis = this;
 
+    vis.houseScale = d3.scaleLinear()
+      .domain(d3.extent(vis.data.classes, d => d.line_count))
+      .range([10, 100]);
+
     vis.render();
   }
 
   render() {
     let vis = this;
 
-    // TODO eventually use an actual scale
-    const linecountScale = (d) => 15 + Math.sqrt(d.line_count);
+    vis.runForceSimulation();
+    vis.renderHouse();
+
+  }
+
+  runForceSimulation() {
+    let vis = this;
 
     // vis.svg.append('defs').append('marker')
     //   .attr('id', 'arrowhead')
@@ -65,7 +74,7 @@ class Town {
       .force('x', d3.forceX(vis.config.containerWidth / 2).strength(0.4))
       .force('y', d3.forceY(vis.config.containerHeight / 2).strength(0.6))
       .force('charge', d3.forceManyBody().strength(-7000))
-      .force('collision', d3.forceCollide().radius(linecountScale))
+      .force('collision', d3.forceCollide().radius(d => vis.houseScale(d.line_count)))
       .nodes(vis.data.classes)
       .on('tick', () => {
         vis.links
@@ -76,7 +85,7 @@ class Town {
 
         vis.nodes
           .attr('transform', (d) => `translate(${d.x}, ${d.y})`);
-      });;
+      });
 
     vis.links = vis.town.selectAll('.link')
       .data(vis.data.links)
@@ -113,63 +122,79 @@ class Town {
           if (!d3.event.active) vis.simulation.alphaTarget(0);
           d.fx = null;
           d.fy = null;
-        }))
-      .on('click', d => {
-        vis.detail.selectedClass =
-          vis.detail.selectedClass = d.name;
+        })
+      )
+      .on('mouseover', (d) => {
+        vis.detail.hoverClass = d.name;
+        vis.detail.update();
+      })
+      .on('mouseout', () => {
+        vis.detail.hoverClass = null;
         vis.detail.update();
       });
 
+    vis.simulation.force('link')
+      .links(vis.data.links)
+  }
+
+  renderHouse() {
+    let vis = this;
+
     // House
-    vis.nodes.append('rect')
-      .attr('width', linecountScale)
-      .attr('height', linecountScale)
+    vis.house = vis.nodes.append('g');
+    vis.house.append('rect')
+      .attr('class', 'house')
+      .attr('width', d => vis.houseScale(d.line_count))
+      .attr('height', d => vis.houseScale(d.line_count))
+      .attr('y', d => `${vis.houseScale(d.line_count) * -1}`)
       .style('stroke', 'black')
       .style('fill', '#ffe88a');
 
     // Roof
-    const trianglePoints = (d) => `0 0, ${linecountScale(d)} 0, ${linecountScale(d) / 2} -${linecountScale(d) / 2} ${linecountScale(d) / 2}, -${linecountScale(d) / 2} 0 0`;
-    vis.nodes.append('polyline')
+    const trianglePoints = (d) =>
+      `0 0, ${vis.houseScale(d.line_count)} 0, \
+      ${vis.houseScale(d.line_count) / 2} -${vis.houseScale(d.line_count) / 2} ${vis.houseScale(d.line_count) / 2}, \
+      -${vis.houseScale(d.line_count) / 2} 0 0`;
+
+    vis.house.append('polyline')
       .attr('points', trianglePoints)
-      .style('fill', 'red')
+      .attr('transform', d => `translate(0, ${vis.houseScale(d.line_count) * -1})`)
+      .style('fill', (d) => d.IsEnumeration ? 'green' : d.IsInterface ? 'blue' : 'red')
       .style('stroke', 'black');
 
     // Door
-    vis.nodes.append('rect')
-      .attr('width', d => linecountScale(d) / 4)
-      .attr('height', d => linecountScale(d) / 2)
-      .attr('x', d => linecountScale(d) / 5 * 2)
-      .attr('y', d => linecountScale(d) / 2)
+    vis.house.append('rect')
+      .attr('width', d => vis.houseScale(d.line_count) / 4)
+      .attr('height', d => vis.houseScale(d.line_count) / 2)
+      .attr('x', d => vis.houseScale(d.line_count) / 5 * 2)
+      .attr('y', d => vis.houseScale(d.line_count) / 2 - vis.houseScale(d.line_count))
       .style('fill', 'brown');
 
     // Windows
-    vis.nodes.append('rect')
-      .attr('width', d => linecountScale(d) / 4)
-      .attr('height', d => linecountScale(d) / 4)
-      .attr('x', d => linecountScale(d) / 7)
-      .attr('y', d => linecountScale(d) / 7)
+    vis.house.append('rect')
+      .attr('width', d => vis.houseScale(d.line_count) / 4)
+      .attr('height', d => vis.houseScale(d.line_count) / 4)
+      .attr('x', d => vis.houseScale(d.line_count) / 7)
+      .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
       .style('fill', 'white');
-    vis.nodes.append('rect')
-      .attr('width', d => linecountScale(d) / 4)
-      .attr('height', d => linecountScale(d) / 4)
-      .attr('x', d => linecountScale(d) / 7 * 4)
-      .attr('y', d => linecountScale(d) / 7)
+    vis.house.append('rect')
+      .attr('width', d => vis.houseScale(d.line_count) / 4)
+      .attr('height', d => vis.houseScale(d.line_count) / 4)
+      .attr('x', d => vis.houseScale(d.line_count) / 7 * 4)
+      .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
       .style('fill', 'white');
 
-    vis.nodes.append('rect')
+    // House label
+    vis.house.append('rect')
       .attr('width', 12)
       .attr('height', d => d.name.length * 9)
-      .attr('transform', d => `translate(0, ${linecountScale(d) + 12}) rotate(-90)`)
+      .attr('transform', d => `translate(0, 13) rotate(-90)`)
       .style('fill', 'white')
       .style('opacity', 0.8)
-    vis.nodes.append('text')
+    vis.house.append('text')
       .attr('class', 'house-label')
-      .attr('dy', d => linecountScale(d) + 12) // use font-size instead of 10 for more dynamic
+      .attr('dy', 13) // use font-size instead of 10 for more dynamic
       .attr('font-weight', 'bold')
       .text(d => d.name);
-
-    vis.simulation
-      .force('link')
-      .links(vis.data.links);
   }
 }
