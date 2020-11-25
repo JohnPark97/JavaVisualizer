@@ -1,5 +1,6 @@
 package data;
 
+import com.github.javaparser.Position;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.ConditionalExpr;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ComplicatedConditionalVisitor extends VoidVisitorAdapter<List<String>> {
+public class ComplicatedConditionalVisitor extends VoidVisitorAdapter<List<ConditionalTracker>> {
 
     public List<String> operators = Arrays.asList( "AND", "BINARY_OR", "BINARY_AND"
             ,"EQUALS","GREATER","GREATER_EQUALS","LESS",
@@ -20,19 +21,28 @@ public class ComplicatedConditionalVisitor extends VoidVisitorAdapter<List<Strin
 
     //a && b or 155 * 33
     @Override
-    public void visit(BinaryExpr be, List<String> n){
-        if(operators.contains(be.getOperator().name())){
-            n.add(be.getOperator().name());
-            Expression left = be.getLeft();
-            Expression right = be.getRight();
-            ComplicatedConditionalVisitor cv = new ComplicatedConditionalVisitor();
-            if(left.isBinaryExpr()){
-                left.accept(cv,n);
-            }
-            if(right.isBinaryExpr()){
-                right.accept(cv,n);
-            }
+    public void visit(BinaryExpr be, List<ConditionalTracker> n){
+        Position start = be.getRange().get().begin;
+        Position end = be.getRange().get().end;
+        Integer numberOfConditional = 0;
+        List<String> conditonalList = new ArrayList<String>();
+        ConditionalTracker ct = new ConditionalTracker(start,end,numberOfConditional,conditonalList);
+        checkBranch(be,ct);
+        n.add(ct);
+    }
+
+    public void checkBranch(BinaryExpr be, ConditionalTracker c){
+        c.setNumberofConditional(c.getNumberofConditional() + 1);
+        c.getConditionals().add(be.getOperator().name());
+        Expression left = be.getLeft();
+        Expression right = be.getRight();
+        if(left.isBinaryExpr()){
+            checkBranch(left.asBinaryExpr(),c);
         }
+        if(right.isBinaryExpr()){
+            checkBranch(right.asBinaryExpr(),c);
+        }
+
     }
 
 

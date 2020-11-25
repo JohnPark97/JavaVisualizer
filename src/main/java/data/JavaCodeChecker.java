@@ -60,17 +60,20 @@ public class JavaCodeChecker {
             jc.setInformation(codeSmell);
         }
     }
+    
    //check if method has Complicated conditional
     public void checkComplicatedConditional(JavaClass jc, JavaMethod jm) {
         String CodeSmells = "";
         for (Statement s : jm.getStatements()) {
             System.out.println(s);
             ComplicatedConditionalVisitor javaCodeCheckerVisitor = new ComplicatedConditionalVisitor();
-            List<String> numberofConditional = new ArrayList<String>();
+            List<ConditionalTracker> numberofConditional = new ArrayList<ConditionalTracker>();
             s.accept(javaCodeCheckerVisitor, numberofConditional);
-            if(numberofConditional.size() >= MaxConditionalStmt){
-                CodeSmells = CodeSmells + "Complicated Conditional: " + "Conditional is too complicated on lines: "
-                        +s.getRange().get().begin +" - "+s.getRange().get().end +".\n";
+            for(ConditionalTracker c: numberofConditional) {
+                if (c.getConditionals().size() >= MaxConditionalStmt) {
+                    CodeSmells = CodeSmells + "Complicated Conditional: " + "Conditional is too complicated on lines: "
+                            + c.getStartLine() + " - " + c.getEndLine() + ".\n";
+                }
             }
         }
         String finalcodeSmell = jc.getInformation() + CodeSmells;
