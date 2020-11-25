@@ -1,5 +1,8 @@
 package data;
 
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.stmt.Statement;
+
 import java.util.List;
 
 public class JavaMethod {
@@ -9,6 +12,7 @@ public class JavaMethod {
     List<String> modifiers;
     List<JavaParameter> parameterList;
     Integer LineCount;
+    NodeList<Statement> statements;
 
     public JavaMethod(String returnType, String name,Boolean b, List<String> modifiers, List<JavaParameter> parameterList,Integer lc) {
         this.returnType = returnType;
@@ -17,6 +21,7 @@ public class JavaMethod {
         this.modifiers = modifiers;
         this.parameterList = parameterList;
         this.LineCount = lc;
+        this.statements = new NodeList<Statement>();
     }
 
     public String getReturnType() {
@@ -29,6 +34,14 @@ public class JavaMethod {
 
     public Integer getLineCount() {
         return LineCount;
+    }
+
+    public NodeList<Statement> getStatements() {
+        return statements;
+    }
+
+    public void setStatements(NodeList<Statement> statements) {
+        this.statements = statements;
     }
 
     public void setLineCount(Integer lineCount) {
