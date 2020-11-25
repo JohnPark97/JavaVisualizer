@@ -42,7 +42,7 @@ async function inputHashMap(listOfFiles) {
       const nextListOfFiles = await httpRequest(url, {
         method: 'GET',
       });
-      inputHashMap(nextListOfFiles);
+      await inputHashMap(nextListOfFiles);
     } else if (element['type'] === 'file' && isCodeFile(element['name'])) {
       hash[element['name']] = element;
     }

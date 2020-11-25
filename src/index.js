@@ -28,8 +28,8 @@ const main = async () => {
   try {
     /* To get data from backend */
 
-    // repoURL = await getRepoURL();
-    // res = await getData(repoURL);
+    repoURL = await getRepoURL();
+    res = await getData(repoURL);
     
     // TODO figure out a way to combine zipping and URL
     // file = await handleFileSubmission();
