@@ -53,6 +53,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         String type = fd.getVariable(0).getTypeAsString();
         Type varType = fd.getVariable(0).getType();
 
+        System.out.println("Field Name: " + fd.getVariables().getFirst());
         setDependencies(varType,arg);
 
         List<String> listofModifiers = new ArrayList<String>();
@@ -91,17 +92,19 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             type = elementType;
             elementType = type.getElementType();
         }
+        if(!elementType.isPrimitiveType()) {
             Optional<NodeList<Type>> arguments = type.asClassOrInterfaceType().getTypeArguments();
-        if(!arguments.isEmpty()){
-            List<JavaCollection> innerTypes = new ArrayList<JavaCollection>();
-            for(int i = 0; i < arguments.get().size();i++) {
-                Type innertype = arguments.get().get(i);
-                innerTypes.add(new JavaCollection(type.asClassOrInterfaceType().getNameAsString(),innertype.asString()));
-                getCollection(innertype,jd);
+            if (!arguments.isEmpty()) {
+                List<JavaCollection> innerTypes = new ArrayList<JavaCollection>();
+                for (int i = 0; i < arguments.get().size(); i++) {
+                    Type innertype = arguments.get().get(i);
+                    innerTypes.add(new JavaCollection(type.asClassOrInterfaceType().getNameAsString(), innertype.asString()));
+                    getCollection(innertype, jd);
+                }
+                jd.getCollection().put(t.asString(), innerTypes);
+            } else {
+                jd.getClassNames().add(t.asString());
             }
-            jd.getCollection().put(t.asString(),innerTypes);
-        }else {
-            jd.getClassNames().add(t.asString());
         }
     }
 
