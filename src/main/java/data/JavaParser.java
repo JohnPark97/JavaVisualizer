@@ -49,6 +49,7 @@ public class JavaParser {
             javaClass.setGlobalVariables(new ArrayList<JavaVariable>());
             javaClass.setMethods(new ArrayList<JavaMethod>());
             javaClass.setEnum(false);
+            javaClass.setInformation("Potential Code Smells: \n");
             JavaVisitor visitor = new JavaVisitor();
             cu.accept(visitor, javaClass);
             //add it to the list of java classes
@@ -59,6 +60,8 @@ public class JavaParser {
         JSONConvertor convertor = new JSONConvertor();
         JSONObject jsonProject = JSONConvertor.createJSON(ListOfJavaClasses);
 
+        JavaCodeChecker javaCodeChecker = new JavaCodeChecker();
+        javaCodeChecker.checkClass(ListOfJavaClasses);
 
         try (FileWriter file = new FileWriter("assets/project.json")) {
 

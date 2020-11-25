@@ -20,6 +20,7 @@ public class JavaClass {
     List<String> Implements;
     List<JavaDependency> Dependencies;
     List<String> Imports;
+    String Information;
 
     public JavaClass(){}
 
@@ -29,6 +30,14 @@ public class JavaClass {
 
     public Boolean getInterface() {
         return Interface;
+    }
+
+    public String getInformation() {
+        return Information;
+    }
+
+    public void setInformation(String information) {
+        Information = information;
     }
 
     public List<JavaVariable> getGlobalVariables() {
