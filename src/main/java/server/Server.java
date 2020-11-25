@@ -63,6 +63,20 @@ public class Server {
                 System.out.println("Error while downloading");
             }
 
+            // Run it through the parser
+            JavaParser jp = new JavaParser();
+            jp.parse();
+
+            try {
+                for (String url: downloadUrls) {
+                    String path = ASSETSPATH + PROJECT_TO_PARSE + getFileName(url);
+                    File file = new File(path);
+                    file.delete();
+                }
+            } catch (Exception e) {
+                System.out.println("error while deleting");
+            }
+
             // Test response in JSON
             String response = "{ \"a\" : 1 }";
 
