@@ -1,12 +1,17 @@
 package data;
 
+import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class JavaCodeChecker {
 
     public int MaxClassLength = 200;
     public int MaxMethodLength = 50;
-    public int MaxParameterLength = 0;
+    public int MaxParameterLength = 3;
+    public int MaxConditionalStmt = 2;
 
 
     public JavaCodeChecker() { }
@@ -19,6 +24,7 @@ public class JavaCodeChecker {
             for(JavaMethod jm: jc.getMethods()) {
                 checkLongMethod(jc,jm);
                 checkTooManyParameters(jc,jm);
+                checkComplicatedConditional(jc,jm);
             }
         }
     }
@@ -53,8 +59,21 @@ public class JavaCodeChecker {
                     " Method has too many parameters. Exceeding the max parameter: "+MaxParameterLength +".\n";
             jc.setInformation(codeSmell);
         }
-
-
-
+    }
+   //check if method has Complicated conditional
+    public void checkComplicatedConditional(JavaClass jc, JavaMethod jm) {
+        String CodeSmells = "";
+        for (Statement s : jm.getStatements()) {
+            System.out.println(s);
+            ComplicatedConditionalVisitor javaCodeCheckerVisitor = new ComplicatedConditionalVisitor();
+            List<String> numberofConditional = new ArrayList<String>();
+            s.accept(javaCodeCheckerVisitor, numberofConditional);
+            if(numberofConditional.size() >= MaxConditionalStmt){
+                CodeSmells = CodeSmells + "Complicated Conditional: " + "Conditional is too complicated on lines: "
+                        +s.getRange().get().begin +" - "+s.getRange().get().end +".\n";
+            }
+        }
+        String finalcodeSmell = jc.getInformation() + CodeSmells;
+        jc.setInformation(finalcodeSmell);
     }
 }
