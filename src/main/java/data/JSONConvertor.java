@@ -33,6 +33,7 @@ public class JSONConvertor {
         jsonClass.put("IsEnumeration",jc.getEnum());
         jsonClass.put("imports",jc.getImports());
         jsonClass.put("IsInterface", jc.getInterface());
+        jsonClass.put("IsAbstract", jc.getAbstract());
 
         List<JSONObject> methods = new ArrayList<JSONObject>();
         for (JavaMethod m : jc.Methods) {

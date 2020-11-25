@@ -12,6 +12,7 @@ public class JavaClass {
     String ClassName;
     Boolean Interface;
     Boolean IsEnum;
+    Boolean IsAbstract;
     Integer LineCount;
     List<JavaVariable> GlobalVariables;
     List<JavaMethod> Methods;
@@ -56,6 +57,14 @@ public class JavaClass {
 
     public List<String> getImports() {
         return Imports;
+    }
+
+    public Boolean getAbstract() {
+        return IsAbstract;
+    }
+
+    public void setAbstract(Boolean anAbstract) {
+        IsAbstract = anAbstract;
     }
 
     public void setImports(List<String> imports) {
