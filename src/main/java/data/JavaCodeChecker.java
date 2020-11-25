@@ -4,8 +4,8 @@ import java.util.List;
 
 public class JavaCodeChecker {
 
-    public int MaxClassLength = 1;
-    public int MaxMethodLength = 1;
+    public int MaxClassLength = 200;
+    public int MaxMethodLength = 50;
 
 
     public JavaCodeChecker() { }
