@@ -8,10 +8,11 @@ import java.util.List;
 
 public class JavaCodeChecker {
 
-    public int MaxClassLength = 200;
-    public int MaxMethodLength = 50;
-    public int MaxParameterLength = 3;
-    public int MaxConditionalStmt = 2;
+    public int MaxClassLength = 100;//200
+    public int MaxMethodLength = 30;//50
+    public int MaxParameterLength = 1;//3
+    public int MaxConditionalStmt = 1;//2
+    public int MaxDereferences = 1;//2
 
 
     public JavaCodeChecker() { }
@@ -25,6 +26,7 @@ public class JavaCodeChecker {
                 checkLongMethod(jc,jm);
                 checkTooManyParameters(jc,jm);
                 checkComplicatedConditional(jc,jm);
+                checkFeatureEnvy(jc,jm);
             }
         }
     }
@@ -79,4 +81,25 @@ public class JavaCodeChecker {
         String finalcodeSmell = jc.getInformation() + CodeSmells;
         jc.setInformation(finalcodeSmell);
     }
+
+    //check if method has FeatureEnvy
+    public void checkFeatureEnvy(JavaClass jc, JavaMethod jm) {
+        String CodeSmells = "";
+        for (Statement s : jm.getStatements()) {
+            System.out.println(s);
+            FeatureEnvyVisitor featureEnvyVisitor = new FeatureEnvyVisitor();
+            List<FeatureEnvyTracker> numberofFeatureEnvy = new ArrayList<FeatureEnvyTracker>();
+            s.accept(featureEnvyVisitor, numberofFeatureEnvy);
+            for(FeatureEnvyTracker f: numberofFeatureEnvy) {
+                if (f.getNumberofDereferences() >= MaxDereferences) {
+                    CodeSmells = CodeSmells + "Feature Envy: " + "In "+jm.getName()+ " Method: Too many dereferences on lines: "
+                            + f.getStartLine() + " - " + f.getEndLine() + ".\n";
+                }
+            }
+        }
+        String finalcodeSmell = jc.getInformation() + CodeSmells;
+        jc.setInformation(finalcodeSmell);
+    }
+
+
 }
