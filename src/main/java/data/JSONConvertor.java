@@ -34,6 +34,7 @@ public class JSONConvertor {
         jsonClass.put("imports",jc.getImports());
         jsonClass.put("IsInterface", jc.getInterface());
         jsonClass.put("IsAbstract", jc.getAbstract());
+        jsonClass.put("Information",jc.getInformation());
 
         List<JSONObject> methods = new ArrayList<JSONObject>();
         for (JavaMethod m : jc.Methods) {

@@ -8,11 +8,11 @@ import java.util.List;
 
 public class JavaCodeChecker {
 
-    public int MaxClassLength = 100;//200
-    public int MaxMethodLength = 30;//50
-    public int MaxParameterLength = 1;//3
-    public int MaxConditionalStmt = 1;//2
-    public int MaxDereferences = 1;//2
+    public int MaxClassLength = 200;//200
+    public int MaxMethodLength = 50;//50
+    public int MaxParameterLength = 3;//3
+    public int MaxConditionalStmt = 2;//2
+    public int MaxDereferences = 2;//2
 
 
     public JavaCodeChecker() { }
