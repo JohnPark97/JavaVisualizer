@@ -77,7 +77,7 @@ public class JavaParser {
                 Boolean classExist = false;
                 for (JavaClass j : list) {
                     for(String s: jc.getDependencies().get(i).getClassNames()){
-                        if (s.contains(j.getClassName())) {
+                        if (s.equals(j.getClassName())) {
                             classExist = true;
                         }
                     }
