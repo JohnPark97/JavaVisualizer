@@ -1,6 +1,3 @@
-const testDataFilePath = '../assets/project.json';
-// const testDataFilePath = '../assets/test_data.json';
-
 const getRepoURL = () => {
   return new Promise((resolve) => {
     let repoURL;
@@ -8,10 +5,21 @@ const getRepoURL = () => {
       repoURL = $('#repo-link').val();
       if (!repoURL) return window.alert('Please enter a Github repo');
 
-      // validate URL?
+      repoURL = repoURL.trim();
+      if (!validateURL(repoURL)) return window.alert('URL must have the format github.com/USER/REPO');
       return resolve(repoURL);
     });
   });
+};
+
+const validateURL = (repoURL) => {
+  try {
+    const parts = repoURL.split('/');
+    const index = parts.findIndex(p => p == 'github.com');
+    return parts.length - 2 == (index + 1);
+  } catch (err) {
+    return false;
+  }
 };
 
 const handleFileSubmission = () => {
@@ -24,28 +32,33 @@ const handleFileSubmission = () => {
 }
 
 const main = async () => {
-  let repoURL, res, testData, file, zip;
+  let res, data, zip;
   try {
-    /* To get data from backend */
+    res = await Promise.race([getRepoURL(), handleFileSubmission()]);
 
-    repoURL = await getRepoURL();
-    res = await getData(repoURL);
-    
-    // TODO figure out a way to combine zipping and URL
-    // file = await handleFileSubmission();
-    // zip = await readFile(file);
-    // res = await postZip(zip);
+    if (typeof res == "object") {
+      // is a zip file
+      zip = await readFile(res);
+      data = await postZip(zip);
+    } else {
+      // is a repoURL
+      return main();
+      data = await getData(res);  
+    }
 
+    if (data.classes.length == 0) {
+      window.alert('This project has no Java classes!');
+      return main();
+    }
   } catch (err) {
     console.log(err);
   }
 
-  // mocked data
-  res = await fetch(testDataFilePath);
-  testData = await res.json();
-  testData = formatData(testData);
-  console.log(testData);
-  visualize(testData);
+  data = formatData(data);
+  console.log(data);
+  visualize(data);
+
+  main();
 };
 
 main();

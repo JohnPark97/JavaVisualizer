@@ -17,9 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Server {
-    private static final String ASSETSPATH= "assets/";
+    private static final String ASSETS_PATH = "assets/";
     private static final String PROJECT_TO_PARSE = "project_to_parse/";
 
     public static void main(String[] args) throws Exception {
@@ -40,6 +42,12 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            // Delete existing project files
+            Files.walk(Path.of(ASSETS_PATH + PROJECT_TO_PARSE))
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
             InputStream inputStream = exchange.getRequestBody();
 
             StringBuilder textBuilder = new StringBuilder();
@@ -56,7 +64,7 @@ public class Server {
             downloadUrls = parseListFromServer(downloadUrlString);
 
             try {
-                for (String url: downloadUrls) {
+                for (String url : downloadUrls) {
                     download(url);
                 }
             } catch (Throwable e) {
@@ -67,18 +75,9 @@ public class Server {
             JavaParser jp = new JavaParser();
             jp.parse();
 
-            try {
-                for (String url: downloadUrls) {
-                    String path = ASSETSPATH + PROJECT_TO_PARSE + getFileName(url);
-                    File file = new File(path);
-                    file.delete();
-                }
-            } catch (Exception e) {
-                System.out.println("error while deleting");
-            }
-
-            // Test response in JSON
-            String response = "{ \"a\" : 1 }";
+            // Response in JSON
+            String jsonFilePath = "assets/project.json";
+            String response = new String(Files.readAllBytes(Paths.get(jsonFilePath)));
 
             Headers responseHeaders = exchange.getResponseHeaders();
             // reply with JSON
@@ -92,33 +91,33 @@ public class Server {
             os.close();
         }
 
-        private static boolean isRedirected( Map<String, List<String>> header ) {
-            for( String hv : header.get( null )) {
-                if(   hv.contains( " 301 " )
-                        || hv.contains( " 302 " )) return true;
+        private static boolean isRedirected(Map<String, List<String>> header) {
+            for (String hv : header.get(null)) {
+                if (hv.contains(" 301 ")
+                        || hv.contains(" 302 ")) return true;
             }
             return false;
         }
 
         private static void download(String link) throws Throwable {
-            String            fileName = getFileName(link);
-            URL               url  = new URL( link );
-            HttpURLConnection http = (HttpURLConnection)url.openConnection();
-            Map< String, List< String >> header = http.getHeaderFields();
-            while( isRedirected( header )) {
-                link = header.get( "Location" ).get( 0 );
-                url    = new URL( link );
-                http   = (HttpURLConnection)url.openConnection();
+            String fileName = getFileName(link);
+            URL url = new URL(link);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            Map<String, List<String>> header = http.getHeaderFields();
+            while (isRedirected(header)) {
+                link = header.get("Location").get(0);
+                url = new URL(link);
+                http = (HttpURLConnection) url.openConnection();
                 header = http.getHeaderFields();
             }
-            InputStream  input  = http.getInputStream();
-            byte[]       buffer = new byte[4096];
-            int          n      = -1;
+            InputStream input = http.getInputStream();
+            byte[] buffer = new byte[4096];
+            int n = -1;
 
-            String filePath = ASSETSPATH + PROJECT_TO_PARSE;
-            OutputStream output = new FileOutputStream( new File( filePath + fileName ));
+            String filePath = ASSETS_PATH + PROJECT_TO_PARSE;
+            OutputStream output = new FileOutputStream(new File(filePath + fileName));
             while ((n = input.read(buffer)) != -1) {
-                output.write( buffer, 0, n );
+                output.write(buffer, 0, n);
             }
             output.close();
         }
@@ -127,18 +126,23 @@ public class Server {
             List<String> returnedList = Arrays.asList(str.split(","));
             return returnedList;
         }
+
         private static String getFileName(String link) {
             List<String> splitedUrl = Arrays.asList(link.split("/"));
             String filename = splitedUrl.get(splitedUrl.size() - 1);
-
             return filename;
-
         }
     }
 
     static class MyZipHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            // Delete existing project files
+            Files.walk(Path.of(ASSETS_PATH + PROJECT_TO_PARSE))
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
             InputStream inputStream = exchange.getRequestBody();
             byte[] data = inputStream.readAllBytes();
 
@@ -156,7 +160,7 @@ public class Server {
             JavaParser jp = new JavaParser();
             jp.parse();
 
-            // Test response in JSON
+            // Response in JSON
             String jsonFilePath = "assets/project.json";
             String response = new String(Files.readAllBytes(Paths.get(jsonFilePath)));
 
@@ -172,5 +176,5 @@ public class Server {
             os.close();
         }
 
-        }
     }
+}

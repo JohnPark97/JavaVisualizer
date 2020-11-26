@@ -1,6 +1,7 @@
-const host = 'https://api.github.com';
+const githubHost = 'https://api.github.com';
+
 const backendHost = 'http://localhost:8000';
-const testEndpoint = '/data';
+const dataEndpoint = '/data';
 const dataFromZipEndpoint = '/dataFromZip';
 
 const extensions = ["js", "css", "java"];
@@ -12,10 +13,6 @@ const repoFilesEndpoint = (owner, repo) => {
 };
 
 const getData = async (repoURL) => {
-  const url = backendHost + testEndpoint;
-  console.log(url);
-  console.log(repoURL);
-
   let resultList = await getHashMap(repoURL);
   const returnedString = resultList.toString();
 
@@ -25,8 +22,7 @@ const getData = async (repoURL) => {
   console.log("String");
   console.log(returnedString);
 
-
-
+  const url = backendHost + dataEndpoint;
   // send github url to backend
   const res = await httpRequest(url, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -37,7 +33,6 @@ const getData = async (repoURL) => {
   });
 
   return res;
-
 };
 
 async function inputHashMap(listOfFiles) {
@@ -57,7 +52,7 @@ async function inputHashMap(listOfFiles) {
 
 const getOwnerAndRepo = (url) => {
   const urlParts = url.split('/');
-  const i = urlParts.findIndex(e => e == 'github.com')
+  const i = urlParts.findIndex(e => e == 'github.com');
   return {
     owner: urlParts[i + 1],
     repo: urlParts[i + 2],
@@ -65,13 +60,12 @@ const getOwnerAndRepo = (url) => {
 };
 
 const getHashMap = async (url) => {
-
   const {
     owner,
     repo,
   } = getOwnerAndRepo(url);
 
-  const repoUrl = host + repoFilesEndpoint(owner, repo);
+  const repoUrl = githubHost + repoFilesEndpoint(owner, repo);
   console.log(repoUrl);
 
   const listOfFiles = await httpRequest(repoUrl, {
@@ -114,22 +108,25 @@ const postZip = async (zip) => {
 }
 
 const formatType = (dependency) => {
+  if (!dependency) return [];
+
   const collections = dependency.Collection;
   const name = dependency.DependencyName;
-  if (collections.length < 1) return [];
-  return collections[0][name].Collection;
 
-  // If this needs to be dynamic
+  const types = [];
   collections.forEach((c) => {
-    console.log(c[name].Collection);
+    if (c[name] && c[name].Collection) {
+      types.push(c[name].Collection);
+    }
   });
-  return ret;
+  return types;
 }
 
 const formatData = (data) => {
   let links = [];
 
-  data.links.forEach((link) => {
+  if (data.links) {
+    data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {
         links.push({
           source: link.Class,
@@ -137,7 +134,8 @@ const formatData = (data) => {
           type: formatType(dependency),
         });
       });
-  });
+    });
+  }
 
   return { classes: data.classes, links };
 }

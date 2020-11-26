@@ -11,6 +11,8 @@ class Town {
 
   initVis() {
     let vis = this;
+    
+    d3.selectAll(`${vis.config.parentElement} *`).remove();
 
     vis.svg = d3.select(vis.config.parentElement)
       .attr('width', vis.config.containerWidth)
@@ -70,7 +72,7 @@ class Town {
     //   .style('stroke', 'none');
 
     vis.simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance
+      .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance?
       .force('x', d3.forceX(vis.config.containerWidth / 2).strength(0.4))
       .force('y', d3.forceY(vis.config.containerHeight / 2).strength(0.6))
       .force('charge', d3.forceManyBody().strength(-7000))

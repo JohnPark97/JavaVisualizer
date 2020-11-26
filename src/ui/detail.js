@@ -25,6 +25,8 @@ class Detail {
 
     vis.containerWidth = vis.config.containerWidth - vis.config.margin.right;
 
+    d3.selectAll(`${vis.config.parentElement} *`).remove();
+
     vis.svg = d3.select(vis.config.parentElement)
       .attr('width', vis.containerWidth)
       .attr('height', vis.config.containerHeight)
