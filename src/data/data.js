@@ -5,7 +5,7 @@ const dataFromZipEndpoint = '/dataFromZip';
 
 const extensions = ["js", "css", "java"];
 
-let hash = new Object();
+let returnedList = [];
 
 const repoFilesEndpoint = (owner, repo) => {
   return `/repos/${owner}/${repo}/contents/`;
@@ -16,7 +16,16 @@ const getData = async (repoURL) => {
   console.log(url);
   console.log(repoURL);
 
-  let map = getHashMap(repoURL);
+  let resultList = await getHashMap(repoURL);
+  const returnedString = resultList.toString();
+
+  console.log("RESULT")
+  console.log(resultList);
+
+  console.log("String");
+  console.log(returnedString);
+
+
 
   // send github url to backend
   const res = await httpRequest(url, {
@@ -24,12 +33,8 @@ const getData = async (repoURL) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: repoURL // body data type must match "Content-Type" header
+    body: returnedString // body data type must match "Content-Type" header
   });
-
-
-  console.log("map");
-  console.log(await map);
 
   return res;
 
@@ -42,9 +47,10 @@ async function inputHashMap(listOfFiles) {
       const nextListOfFiles = await httpRequest(url, {
         method: 'GET',
       });
-      inputHashMap(nextListOfFiles);
+      await inputHashMap(nextListOfFiles);
     } else if (element['type'] === 'file' && isCodeFile(element['name'])) {
-      hash[element['name']] = element;
+      const stringElement = element['download_url'];
+      returnedList.push(stringElement);
     }
   }
 }
@@ -74,10 +80,10 @@ const getHashMap = async (url) => {
 
   await inputHashMap(listOfFiles);
 
-  console.log("hash");
-  console.log(hash);
+  console.log("returnedList");
+  console.log(returnedList);
 
-  return hash;
+  return returnedList;
 }
 
 const isCodeFile = (name) => {
