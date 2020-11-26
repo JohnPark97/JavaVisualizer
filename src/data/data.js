@@ -7,6 +7,7 @@ const dataFromZipEndpoint = '/dataFromZip';
 const extensions = ["js", "css", "java"];
 
 let returnedList = [];
+const collectionSet = new Set();
 
 const repoFilesEndpoint = (owner, repo) => {
   return `/repos/${owner}/${repo}/contents/`;
@@ -113,10 +114,16 @@ const formatType = (dependency) => {
   const collections = dependency.Collection;
   const name = dependency.DependencyName;
 
+  if (collections.length == 0) {
+    collectionSet.add('None');
+    return ['None'];
+  }
+
   const types = [];
   collections.forEach((c) => {
-    if (c[name] && c[name].Collection) {
-      types.push(c[name].Collection);
+    if (c[name] && c[name].length > 0 && c[name][0].Collection) {
+      types.push(c[name][0].Collection);
+      collectionSet.add(c[name][0].Collection);
     }
   });
   return types;
@@ -128,14 +135,20 @@ const formatData = (data) => {
   if (data.links) {
     data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {
-        links.push({
-          source: link.Class,
-          target: dependency.ClassNames[0],
-          type: formatType(dependency),
+        dependency.ClassNames.forEach((cname) => {
+          links.push({
+            source: link.Class,
+            target: cname,
+            type: formatType(dependency),
+          });
         });
       });
     });
   }
 
-  return { classes: data.classes, links };
+  return {
+    classes: data.classes,
+    links,
+    collections: Array.from(collectionSet),
+  };
 }
