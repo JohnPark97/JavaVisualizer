@@ -6,6 +6,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -29,6 +30,10 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         String name = md.getNameAsString();
         List<String> listofModifiers = new ArrayList<String>();
         Integer lineCount = md.getEnd().get().line - md.getBegin().get().line;
+        NodeList<Statement> statements = new NodeList<Statement>();
+        if(!(md.getBody().isEmpty())) {
+            statements = md.getBody().get().getStatements();
+        }
 
         NodeList<Modifier> modifiers = md.getModifiers();
         for(Modifier m: modifiers){
@@ -43,6 +48,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
             listofParameters.add(parameter);
         }
         JavaMethod method = new JavaMethod(returnType,name,false,listofModifiers,listofParameters, lineCount);
+        method.setStatements(statements);
         arg.getMethods().add(method);
         System.out.println("Method Name Printed: " + md.getName());
         }
@@ -115,6 +121,10 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         String returnType = "";
         List<String> listofModifiers = new ArrayList<String>();
         Integer lineCount = cd.getEnd().get().line - cd.getBegin().get().line;
+        NodeList<Statement> statements = new NodeList<Statement>();
+        if(!(cd.getBody().isEmpty())) {
+            statements = cd.getBody().getStatements();
+        }
 
         NodeList<Modifier> modifiers = cd.getModifiers();
         for(Modifier m: modifiers){
@@ -150,6 +160,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         arg.setLineCount(count);
         arg.setEnum(ed.isEnumDeclaration());
         arg.setInterface(false);
+        arg.setAbstract(false);
         arg.setImplements(links);
         arg.setExtensions(new ArrayList<String>());
         System.out.println("EnumDeclaration Printed: " + ed.getName());
@@ -170,6 +181,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         super.visit(cid, arg);
         String className = cid.getNameAsString();
         Boolean IsInterface = cid.isInterface();
+        Boolean IsAbstract = cid.isAbstract();
 
         Integer count =  cid.getEnd().get().line - cid.getBegin().get().line ;
 
@@ -191,6 +203,7 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         arg.setLineCount(count);
         arg.setExtensions(extension);
         arg.setImplements(implement);
+        arg.setAbstract(IsAbstract);
 
         System.out.println("ClassDeclaration Printed: " + className);
     }

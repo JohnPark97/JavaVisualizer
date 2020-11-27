@@ -1,8 +1,8 @@
 package data;
 
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.utils.SourceRoot;
 import org.json.simple.JSONObject;
 
@@ -25,23 +25,16 @@ public class JavaParser {
         List<CompilationUnit> compilationUnits = new ArrayList<CompilationUnit>();
 
         System.out.println(parseResults.size());
-//checking if the parse was successful, then putting all the compilationUnits into a list
+        //checking if the parse was successful, then putting all the compilationUnits into a list
         for (ParseResult<CompilationUnit> parsecu : parseResults) {
-            // if(parsecu.isSuccessful()) {
-            compilationUnits.add(parsecu.getResult().get());
-            //   }
+            if(parsecu.isSuccessful() || checkProblem(parsecu.getProblems())) {
+                compilationUnits.add(parsecu.getResult().get());
+            }
         }
-
-        // Prints out the ast structure:
-        YamlPrinter printer = new YamlPrinter(true);
-        //       System.out.println(printer.output(compilationUnits.get(1)));
-
-        System.out.println(compilationUnits.size());
 
         List<JavaClass> ListOfJavaClasses = new ArrayList<JavaClass>();
 
         for (CompilationUnit cu : compilationUnits) {
-            //              System.out.println(cu);
             //visit the ast structure and get the info that we want
             JavaClass javaClass = new JavaClass();
             javaClass.setDependencies(new ArrayList<JavaDependency>());
@@ -49,6 +42,7 @@ public class JavaParser {
             javaClass.setGlobalVariables(new ArrayList<JavaVariable>());
             javaClass.setMethods(new ArrayList<JavaMethod>());
             javaClass.setEnum(false);
+            javaClass.setInformation("Potential Code Smells: \n");
             JavaVisitor visitor = new JavaVisitor();
             cu.accept(visitor, javaClass);
             //add it to the list of java classes
@@ -56,9 +50,12 @@ public class JavaParser {
         }
         //Checking the dependencies
         checkDependencies(ListOfJavaClasses);
+
+        JavaCodeChecker javaCodeChecker = new JavaCodeChecker();
+        javaCodeChecker.checkClass(ListOfJavaClasses);
+
         JSONConvertor convertor = new JSONConvertor();
         JSONObject jsonProject = JSONConvertor.createJSON(ListOfJavaClasses);
-
 
         try (FileWriter file = new FileWriter("assets/project.json")) {
 
@@ -68,6 +65,18 @@ public class JavaParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkProblem(List<Problem> problems){
+        boolean IsNotproblem = true;
+        for(Problem p: problems){
+            String message = p.getMessage();
+            if(!(message.equals("Switch expressions are not supported."))){
+                IsNotproblem = false;
+            }
+
+        }
+        return IsNotproblem;
     }
 
     public static void checkDependencies(List<JavaClass> list) {
