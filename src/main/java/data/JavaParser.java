@@ -1,6 +1,7 @@
 package data;
 
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import org.json.simple.JSONObject;
@@ -26,7 +27,9 @@ public class JavaParser {
         System.out.println(parseResults.size());
         //checking if the parse was successful, then putting all the compilationUnits into a list
         for (ParseResult<CompilationUnit> parsecu : parseResults) {
-            compilationUnits.add(parsecu.getResult().get());
+            if(parsecu.isSuccessful() || checkProblem(parsecu.getProblems())) {
+                compilationUnits.add(parsecu.getResult().get());
+            }
         }
 
         List<JavaClass> ListOfJavaClasses = new ArrayList<JavaClass>();
@@ -62,6 +65,18 @@ public class JavaParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkProblem(List<Problem> problems){
+        boolean IsNotproblem = true;
+        for(Problem p: problems){
+            String message = p.getMessage();
+            if(!(message.equals("Switch expressions are not supported."))){
+                IsNotproblem = false;
+            }
+
+        }
+        return IsNotproblem;
     }
 
     public static void checkDependencies(List<JavaClass> list) {
