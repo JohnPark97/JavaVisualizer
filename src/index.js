@@ -42,22 +42,24 @@ const main = async () => {
       data = await postZip(zip);
     } else {
       // is a repoURL
-      return main();
-      data = await getData(res);  
+      data = await getData(res);
     }
 
-    if (data.classes.length == 0) {
+    if (!data.classes || data.classes.length == 0) {
       window.alert('This project has no Java classes!');
       return main();
     }
   } catch (err) {
     console.log(err);
+    window.alert('An error has occurred, please try again.');
+    return main();
   }
 
   data = formatData(data);
   console.log(data);
   visualize(data);
 
+  // Allow user to visualize another repo
   main();
 };
 

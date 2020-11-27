@@ -38,15 +38,21 @@ public class Server {
     }
 
     static class MyHandler implements HttpHandler {
-
-
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            // Delete existing project files
-            Files.walk(Path.of(ASSETS_PATH + PROJECT_TO_PARSE))
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            try {
+                // Delete existing project files
+                String filePath = ASSETS_PATH + PROJECT_TO_PARSE;
+                Files.walk(Path.of(filePath))
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                // Create new folder
+                Path path = Paths.get(filePath);
+                Files.createDirectory(path);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
 
             InputStream inputStream = exchange.getRequestBody();
 
@@ -68,7 +74,7 @@ public class Server {
                     download(url);
                 }
             } catch (Throwable e) {
-                System.out.println("Error while downloading");
+                e.printStackTrace();
             }
 
             // Run it through the parser
@@ -114,7 +120,15 @@ public class Server {
             byte[] buffer = new byte[4096];
             int n = -1;
 
+            // Create folder
             String filePath = ASSETS_PATH + PROJECT_TO_PARSE;
+            try {
+                Path path = Paths.get(filePath);
+                Files.createDirectory(path);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
             OutputStream output = new FileOutputStream(new File(filePath + fileName));
             while ((n = input.read(buffer)) != -1) {
                 output.write(buffer, 0, n);
@@ -137,11 +151,19 @@ public class Server {
     static class MyZipHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            // Delete existing project files
-            Files.walk(Path.of(ASSETS_PATH + PROJECT_TO_PARSE))
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            try {
+                // Delete existing project files
+                String filePath = ASSETS_PATH + PROJECT_TO_PARSE;
+                Files.walk(Path.of(filePath))
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                // Create folder
+                Path path = Paths.get(filePath);
+                Files.createDirectory(path);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
 
             InputStream inputStream = exchange.getRequestBody();
             byte[] data = inputStream.readAllBytes();
@@ -175,6 +197,5 @@ public class Server {
             os.write(response.getBytes());
             os.close();
         }
-
     }
 }

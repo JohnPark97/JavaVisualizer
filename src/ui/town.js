@@ -57,6 +57,7 @@ class Town {
     customColours[index] = 'black';
     vis.colourScale.range(customColours);
 
+    vis.legend.data = vis.data;
     vis.legend.colourScale = vis.colourScale;
     vis.legend.update();
 

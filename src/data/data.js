@@ -73,6 +73,9 @@ const getHashMap = async (url) => {
     method: 'GET',
   });
 
+  // Clear previously returned list
+  returnedList = [];
+  
   await inputHashMap(listOfFiles);
 
   console.log("returnedList");
@@ -130,6 +133,7 @@ const formatType = (dependency) => {
 }
 
 const formatData = (data) => {
+  collectionSet.clear();
   let links = [];
 
   if (data.links) {

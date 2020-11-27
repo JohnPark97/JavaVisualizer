@@ -17,8 +17,6 @@ class Legend {
   render() {
     let vis = this;
 
-    console.log(vis.config);
-
     d3.select('.legend').remove();
 
     vis.svg = d3.select(vis.config.selection)
