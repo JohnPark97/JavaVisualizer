@@ -14,6 +14,11 @@
       display: flex;
       justify-content: center;
     }
+
+    .center {
+      display: flex;
+      justify-content: center;
+    }
   </style>
 </head>
 
@@ -31,7 +36,11 @@
     <h3>Submit a ZIP:
       <input type=file id=file-selector accept='.zip'></input>
     </h3>
-
+  </div>
+  <div>
+    <h3 class="center">
+      Use your mouse to pan and zoom!
+    </h3>
   </div>
 
   <div id="viz-container">
@@ -41,6 +50,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="src/ui/legend.js"></script>
   <script src="src/ui/town.js"></script>
   <script src="src/ui/detail.js"></script>
   <script src="src/ui/viz.js"></script>

@@ -6,11 +6,14 @@ class Town {
       containerHeight: _config.containerHeight || 600,
     }
     this.detail = _config.detail;
+    this.data = _config.data;
     this.initVis();
   }
 
   initVis() {
     let vis = this;
+
+    d3.selectAll(`${vis.config.parentElement} *`).remove();
 
     vis.svg = d3.select(vis.config.parentElement)
       .attr('width', vis.config.containerWidth)
@@ -30,6 +33,13 @@ class Town {
     vis.svg.call(d3.zoom().on('zoom', () => {
       vis.town.attr('transform', d3.event.transform);
     }));;
+
+    vis.legend = new Legend({
+      selection: vis.config.parentElement,
+      data: vis.data,
+      containerWidth: vis.config.containerWidth / 5,
+      containerHeight: vis.config.containerHeight / 3,
+    });
   }
 
   update() {
@@ -38,6 +48,18 @@ class Town {
     vis.houseScale = d3.scaleLinear()
       .domain(d3.extent(vis.data.classes, d => d.line_count))
       .range([10, 100]);
+
+    vis.colourScale = d3.scaleOrdinal(d3.schemeCategory10)
+      .domain(vis.data.collections);
+
+    const customColours = vis.colourScale.range();
+    const index = vis.data.collections.findIndex((c) => c == 'None');
+    customColours[index] = 'black';
+    vis.colourScale.range(customColours);
+
+    vis.legend.data = vis.data;
+    vis.legend.colourScale = vis.colourScale;
+    vis.legend.update();
 
     vis.render();
   }
@@ -53,24 +75,24 @@ class Town {
   runForceSimulation() {
     let vis = this;
 
-    // vis.svg.append('defs').append('marker')
-    //   .attr('id', 'arrowhead')
-    //   .attr('viewBox', '-0 -5 10 10')
-    //   .attr('refX', 13)
-    //   .attr('refY', 0)
-    //   .attr('orient', 'auto')
-    //   .attr('markerWidth', 13)
-    //   .attr('markerHeight', 13)
-    //   .attr('xoverflow', 'visible');
+    vis.svg.append('defs').append('marker')
+      .attr('id', 'arrowhead')
+      .attr('viewBox', '-0 -5 10 10')
+      .attr('refX', 13)
+      .attr('refY', 0)
+      .attr('orient', 'auto')
+      .attr('markerWidth', 13)
+      .attr('markerHeight', 13)
+      .attr('xoverflow', 'visible');
 
-    // vis.svg.selectAll('marker')
-    //   .append('svg:path')
-    //   .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
-    //   .attr('fill', '#999')
-    //   .style('stroke', 'none');
+    vis.svg.selectAll('marker')
+      .append('svg:path')
+      .attr('d', 'M 0,-2 L 4 ,0 L 0,2')
+      .attr('fill', 'black')
+      .style('stroke', 'none');
 
     vis.simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance
+      .force('link', d3.forceLink().id((d) => d.name).distance(150).strength(1)) // TODO make a scale for distance?
       .force('x', d3.forceX(vis.config.containerWidth / 2).strength(0.4))
       .force('y', d3.forceY(vis.config.containerHeight / 2).strength(0.6))
       .force('charge', d3.forceManyBody().strength(-7000))
@@ -92,8 +114,7 @@ class Town {
       .enter().append('line')
       .attr('class', 'link')
       .attr('marker-end', 'url(#arrowhead)')
-
-    // vis.links.append('title').text((d) => d.source);
+      .style('stroke', (d) => vis.colourScale(d.type));
 
     // vis.edgepaths = svg.selectAll('.edgepath')
     //   .data(vis.data.links)

@@ -17,6 +17,7 @@ class Detail {
         right: 75,
       },
     }
+    this.data = _config.data;
     this.init();
   }
 
@@ -24,6 +25,8 @@ class Detail {
     let vis = this;
 
     vis.containerWidth = vis.config.containerWidth - vis.config.margin.right;
+
+    d3.selectAll(`${vis.config.parentElement} *`).remove();
 
     vis.svg = d3.select(vis.config.parentElement)
       .attr('width', vis.containerWidth)

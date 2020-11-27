@@ -3,3 +3,6 @@ out/
 **.class
 node_modules/
 target/
+assets/project_to_parse/
+assets/project.json
+assets/user_input.zip
