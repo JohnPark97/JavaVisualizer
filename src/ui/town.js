@@ -38,7 +38,7 @@ class Town {
       selection: vis.config.parentElement,
       data: vis.data,
       containerWidth: vis.config.containerWidth / 5,
-      containerHeight: vis.config.containerHeight / 3,
+      containerHeight: vis.config.containerHeight / 2,
     });
   }
 
@@ -69,7 +69,6 @@ class Town {
 
     vis.runForceSimulation();
     vis.renderHouse();
-
   }
 
   runForceSimulation() {

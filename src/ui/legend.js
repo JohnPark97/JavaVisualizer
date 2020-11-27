@@ -24,7 +24,7 @@ class Legend {
       .attr('class', 'legend')
       .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
-      .attr('transform', `translate(0, ${vis.config.containerHeight * 3 - vis.config.containerHeight})`);
+      .attr('transform', `translate(0, ${vis.config.containerHeight * 2 - vis.config.containerHeight})`);
 
     vis.border = vis.svg.append('rect')
       .attr('width', vis.config.containerWidth)
@@ -35,7 +35,10 @@ class Legend {
 
     vis.textG = vis.svg.append('g')
       .attr('transform', `translate(10, 25)`);
-    vis.collectionG = vis.svg.append('g');
+    vis.classG = vis.svg.append('g')
+      .attr('transform', `translate(10, 95)`);
+    vis.collectionG = vis.svg.append('g')
+      .attr('transform', `translate(10, 175)`);
 
     // Title
     vis.title = vis.textG.append('text')
@@ -55,7 +58,6 @@ class Legend {
     vis.textG.append('text')
       .text('A')
       .attr('transform', `translate(0, ${dependencyTextYOffset})`);
-
     // Arrow line
     vis.textG.append('path')
       .attr('d', d3.line()([[20, dependencyArrowYOffset], [lineEnd, dependencyArrowYOffset]]))
@@ -66,13 +68,29 @@ class Legend {
       .attr('d', d3.line()([[lineEnd, 25], [lineEnd, 45], [vis.config.containerWidth - 40, dependencyArrowYOffset]]))
       .attr('stroke', 'black');
 
-    vis.collectionG
-      .attr('transform', `translate(10, 95)`);
+    vis.classG.append('text')
+      .text('Roofs denote Class type')
+      .attr('text-decoration', 'underline')
+      .style('font-weight', 'bold');
+
+    const classTypes = ['Class', 'Enum', 'Interface'];
+    classTypes.forEach((t, idx) => {
+      const xOffset = vis.config.containerWidth / 3 * idx;
+      const trianglePoints = `0 0, 30 0, 15 -15 15, -15 0 0`;
+      vis.classG.append('polyline')
+        .attr('points', trianglePoints)
+        .attr('transform', d => `translate(${xOffset}, ${dependencyArrowYOffset})`)
+        .style('fill', t == 'Enum' ? 'green' : t == 'Interface' ? 'blue' : 'red')
+        .style('stroke', 'black');
+      vis.classG.append('text')
+        .text(t)
+        .attr('transform', `translate(${xOffset}, ${dependencyTextYOffset + 15})`);
+    });
+
     vis.collectionG.append('text')
-      .text('Collection type')
+      .text('Dependency Collection type')
       .attr('text-decoration', 'underline')
       .attr('font-weight', 'bold')
-
     vis.data.collections.forEach((c, idx) => {
       const yOffset = dependencyTextYOffset + (30 * idx);
       const lineYOffset = yOffset + 5;
@@ -82,7 +100,7 @@ class Legend {
       vis.collectionG.append('path')
         .attr('d', d3.line()([[0, lineYOffset], [lineEnd, lineYOffset]]))
         .attr('stroke', vis.colourScale(c))
-      .attr('stroke-width', 3);
+        .attr('stroke-width', 3);
     });
   }
 }

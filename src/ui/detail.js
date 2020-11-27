@@ -55,7 +55,6 @@ class Detail {
       .attr('y', 75)
       .attr('x', 10)
       .attr('display', '100%')
-      .style('font-size', 25)
       .text('Hover a house to see its details!')
   }
 
