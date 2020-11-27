@@ -68,10 +68,20 @@ public class JavaParser {
         for (JavaClass jc : list) {
             List<JavaDependency> dependencies = new ArrayList<JavaDependency>();
             for (int i = 0; i < jc.getDependencies().size(); i++) {
+                List<String> ClassNames = new ArrayList<String>();
+                for(String s: jc.getDependencies().get(i).getClassNames()){
+                    for(JavaClass j: list){
+                        if(s.equals(j.getClassName())){
+                            ClassNames.add(s);
+                        }
+                    }
+                }
+                jc.getDependencies().get(i).setClassNames(ClassNames);
+
                 Boolean classExist = false;
                 for (JavaClass j : list) {
                     for(String s: jc.getDependencies().get(i).getClassNames()){
-                        if (s.contains(j.getClassName())) {
+                        if (s.equals(j.getClassName())) {
                             classExist = true;
                         }
                     }

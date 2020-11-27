@@ -13,7 +13,7 @@ public class FeatureEnvyVisitor extends VoidVisitorAdapter<List<FeatureEnvyTrack
     @Override
     public void visit(MethodCallExpr mce, List<FeatureEnvyTracker> n){
         if(!mce.getScope().isEmpty()) {
-            Position start = mce.getRange().get().begin;
+                Position start = mce.getRange().get().begin;
             Position end = mce.getRange().get().end;
             Integer numberOfdereferences = 0;
             FeatureEnvyTracker fe = new FeatureEnvyTracker(start, end, numberOfdereferences);
@@ -24,10 +24,11 @@ public class FeatureEnvyVisitor extends VoidVisitorAdapter<List<FeatureEnvyTrack
 
     public void checkDeReferences(MethodCallExpr mce, FeatureEnvyTracker f){
         f.setNumberofDereferences(f.getNumberofDereferences() + 1);
-        if(mce.getScope().get().isMethodCallExpr()){
-            MethodCallExpr m = (MethodCallExpr) mce.getScope().get();
-            checkDeReferences(m,f);
+        if(!mce.getScope().isEmpty()) {
+            if (mce.getScope().get().isMethodCallExpr()) {
+                MethodCallExpr m = (MethodCallExpr) mce.getScope().get();
+                checkDeReferences(m, f);
+            }
         }
-
     }
 }
