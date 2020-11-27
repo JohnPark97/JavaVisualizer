@@ -3,7 +3,7 @@ let detail;
 
 const visualize = (data) => {
   const windowWidth = getWindowWidth();
-  const windowHeight = getWindowHeight() - document.getElementById('viz-container').offsetTop - 10;
+  const windowHeight = getWindowHeight() - 50 // - document.getElementById('viz-container').offsetTop - 10;
 
   detail = new Detail({
     parentElement: '#detail',
