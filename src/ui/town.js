@@ -6,7 +6,7 @@ class Town {
       containerHeight: _config.containerHeight || 600,
     }
     this.detail = _config.detail;
-    this.legend = _config.legend;
+    this.data = _config.data;
     this.initVis();
   }
 
@@ -33,6 +33,13 @@ class Town {
     vis.svg.call(d3.zoom().on('zoom', () => {
       vis.town.attr('transform', d3.event.transform);
     }));;
+
+    vis.legend = new Legend({
+      selection: vis.config.parentElement,
+      data: vis.data,
+      containerWidth: vis.config.containerWidth / 5,
+      containerHeight: vis.config.containerHeight / 3,
+    });
   }
 
   update() {

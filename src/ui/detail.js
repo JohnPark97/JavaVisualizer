@@ -17,6 +17,7 @@ class Detail {
         right: 75,
       },
     }
+    this.data = _config.data;
     this.init();
   }
 
