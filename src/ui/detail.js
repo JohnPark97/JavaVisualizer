@@ -36,7 +36,7 @@ class Detail {
       .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
       .style('stroke', 'black')
-      .style('fill', 'none')
+      .style('fill', 'white')
       .style('stroke-width', 1);
 
     vis.detail = vis.svg.append('g');

@@ -25,7 +25,7 @@ class Town {
       .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
       .style('stroke', 'black')
-      .style('fill', 'none')
+      .style('fill', 'white')
       .style('stroke-width', 1);
 
     vis.town = vis.svg.append('g');
