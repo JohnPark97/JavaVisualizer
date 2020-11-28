@@ -16,7 +16,7 @@ public class JavaParser {
     public JavaParser() {}
 
     public void parse() throws IOException {
-        //get the files from project 1
+        //get the files to parse in folder
         File projectDirectory = new File("assets/project_to_parse");
         SourceRoot source = new SourceRoot(projectDirectory.toPath());
         //Tries to parse all .java files under the source root recursively,
@@ -24,11 +24,12 @@ public class JavaParser {
         List<ParseResult<CompilationUnit>> parseResults = source.tryToParse();//this has all the files parsed from our project 1;
         List<CompilationUnit> compilationUnits = new ArrayList<CompilationUnit>();
 
-        System.out.println(parseResults.size());
         //checking if the parse was successful, then putting all the compilationUnits into a list
         for (ParseResult<CompilationUnit> parsecu : parseResults) {
             if(parsecu.isSuccessful() || checkProblem(parsecu.getProblems())) {
-                compilationUnits.add(parsecu.getResult().get());
+                if(parsecu.isSuccessful() || checkProblem(parsecu.getProblems())) {
+                    compilationUnits.add(parsecu.getResult().get());
+                }
             }
         }
 
