@@ -55,7 +55,6 @@ const main = async () => {
     return main();
   }
 
-  data = await httpRequest('assets/project.json');
   data = formatData(data);
   visualize(data);
 
