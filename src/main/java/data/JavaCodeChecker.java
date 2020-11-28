@@ -99,6 +99,7 @@ public class JavaCodeChecker {
             DataClumpfinals.putAll(result);
 
 
+            HashMap<List<String>,List<String>> CodeSmellList = new HashMap<>();
             Set<List<JavaParameter>> jpkeys = DataClumpfinals.keySet();
             for (List<JavaParameter> key : jpkeys) {
                 Integer count = DataClumpfinals.get(key);
@@ -107,20 +108,41 @@ public class JavaCodeChecker {
                 for (JavaParameter p : key) {
                     DataClumpParameterNames.add(p.getType() + " " + p.getName());
                 }
-                Integer i = 0;
                 for (List<JavaParameter> jp : ListofparameterList) {
                     if (ListinParameterlist(key, jp)) {
                     }
                     DataClumpMethods = jc.getMethods().stream()
                             .filter(m -> ListinParameterlist(key, m.getParameterList()))
                             .map(JavaMethod::getName).collect(Collectors.toList());
-                    i++;
                 }
-                CodeSmells = CodeSmells + "Data Clump between Methods: " + DataClumpMethods + " with parameters: "
-                        + DataClumpParameterNames + ".\n";
+                CodeSmellList.put(DataClumpMethods,DataClumpParameterNames);
             }
+
+            CodeSmellList = removeSubsetDataClump(CodeSmellList);
+            Set<List<String>> methodkeys = CodeSmellList.keySet();
+        for(List<String> key: methodkeys){
+            CodeSmells = CodeSmells + "Data Clump between Methods: " + key + " with parameters: "
+                    + CodeSmellList.get(key) + ".\n";
+        }
             String finalcodeSmell = jc.getInformation() + CodeSmells;
             jc.setInformation(finalcodeSmell);
+    }
+
+    public HashMap<List<String>,List<String>> removeSubsetDataClump(HashMap<List<String>,List<String>> map){
+        HashMap<List<String>,List<String>> CodeSmellList = new HashMap<>();
+        Set<List<String>> methodkeys = map.keySet();
+        for(List<String> key: methodkeys){
+            int count = 0;
+            for(List<String> key2:methodkeys){
+                if((map.get(key2)).containsAll(map.get(key))){
+                    count++;
+                }
+            }
+            if(count <= 1){
+              CodeSmellList.put(key, map.get(key));
+            }
+        }
+        return CodeSmellList;
     }
 
     public void checkingClump(List<List<JavaParameter>> ListofparameterList,
