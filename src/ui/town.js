@@ -40,6 +40,8 @@ class Town {
       containerWidth: vis.config.containerWidth / 5,
       containerHeight: vis.config.containerHeight / 2,
     });
+
+    vis.displayed = false;
   }
 
   update() {
@@ -48,6 +50,10 @@ class Town {
     vis.houseScale = d3.scaleLinear()
       .domain(d3.extent(vis.data.classes, d => d.line_count))
       .range([10, 100]);
+
+    vis.garbageScale = d3.scaleLinear()
+      .domain(d3.extent(vis.data.classes, d => d.smells.length))
+      .range([0, d3.max(vis.houseScale.range())]);
 
     vis.colourScale = d3.scaleOrdinal(d3.schemeCategory10)
       .domain(vis.data.collections);
@@ -60,6 +66,12 @@ class Town {
     vis.legend.data = vis.data;
     vis.legend.colourScale = vis.colourScale;
     vis.legend.update();
+
+    if (!vis.displayed) {
+      vis.displayed = !vis.displayed;
+      const msg = d3.max(vis.garbageScale.domain()) == 0 ? 'Your code rocks!' : 'Your code smells!';
+      setTimeout(() => window.alert(msg), 3000);
+    }
 
     vis.render();
   }
@@ -114,15 +126,6 @@ class Town {
       .attr('class', 'link')
       .attr('marker-end', 'url(#arrowhead)')
       .style('stroke', (d) => vis.colourScale(d.type));
-
-    // vis.edgepaths = svg.selectAll('.edgepath')
-    //   .data(vis.data.links)
-    //   .enter().append('path')
-    //   .attr('class', 'edgepath')
-    //   .attr('fill-opacity', 0)
-    //   .attr('stroke-opacity', 0)
-    //   .attr('id', (d, i) => 'edgepath' + i)
-    //   .style('pointer-events', 'none');
 
     vis.nodes = vis.town.selectAll('.node')
       .data(vis.data.classes)
@@ -213,8 +216,16 @@ class Town {
       .style('opacity', 0.8)
     vis.house.append('text')
       .attr('class', 'house-label')
-      .attr('dy', 13) // use font-size instead of 10 for more dynamic
+      .attr('dy', 13) // use font-size instead of 10 for more dynamic?
       .attr('font-weight', 'bold')
       .text(d => d.name);
+
+    const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
+    vis.house.append('svg:image')
+      .attr('x', d => -magicNumber(d))
+      .attr('y', d => -magicNumber(d))
+      .attr('width', d => magicNumber(d))
+      .attr('height', d => magicNumber(d))
+      .attr('xlink:href', 'assets/garbage.png');
   }
 }

@@ -1,11 +1,13 @@
 const propertiesToViz = {
   name: 'Class',
+  smells: 'Code smells',
   line_count: 'Line count',
-  // IsEnumeration: 'Is Enum?',
+  // These fields are appended to the 'Class' text
+  // IsEnumeration: 'Is Enum?', 
   // IsInterface: 'Is Interface?',
   imports: 'Imports',
   methods: 'Methods',
-  variables: 'Variables'
+  variables: 'Variables',
 };
 class Detail {
   constructor(_config) {
@@ -13,9 +15,6 @@ class Detail {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 1000,
       containerHeight: _config.containerHeight || 600,
-      margin: {
-        right: 75,
-      },
     }
     this.data = _config.data;
     this.init();
@@ -24,19 +23,17 @@ class Detail {
   init() {
     let vis = this;
 
-    vis.containerWidth = vis.config.containerWidth - vis.config.margin.right;
-
     d3.selectAll(`${vis.config.parentElement} *`).remove();
 
     vis.svg = d3.select(vis.config.parentElement)
-      .attr('width', vis.containerWidth)
+      .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
       .attr('x', vis.config.containerWidth);
 
     vis.border = vis.svg.append('rect')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', vis.containerWidth)
+      .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
       .style('stroke', 'black')
       .style('fill', 'none')
@@ -48,14 +45,14 @@ class Detail {
       .attr('x', 10)
       .style('font-size', 25)
       .style('font-weight', 'bold')
-      .text('Details')
+      .text('Details');
 
     vis.detail.hint = vis.detail.append('text')
       .attr('class', 'hint')
       .attr('y', 75)
       .attr('x', 10)
       .attr('display', '100%')
-      .text('Hover a house to see its details!')
+      .text('Hover a house to see its details!');
   }
 
   update() {
@@ -68,8 +65,7 @@ class Detail {
     let vis = this;
 
     for (let klass of vis.data.classes) {
-      if ((!vis.hoverClass) || // && !vis.selectedClass) ||
-        (klass.name != vis.hoverClass)) continue; // && klass.name != vis.selectedClass)) continue;
+      if ((!vis.hoverClass) || (klass.name != vis.hoverClass)) continue;
 
       // Hide hint and previous class' details
       vis.detail.selectAll('.hint').attr('display', 'none');
@@ -84,9 +80,49 @@ class Detail {
         .attr('x', 10)
         .attr('overflow', 'auto')
         .append('xhtml:div')
-        .html(vis.getClassPropertyText(klass));
+        .html(vis.getClassPropertyText(klass))
+        .call(vis.wrap, vis.config.containerWidth);
     };
   }
+
+  // based on https://bl.ocks.org/mbostock/7555321
+  wrap(text, width) {
+    let vis = this;
+    text.each(() => {
+      var text = d3.select(this);
+      if (text.length > 0) {
+        console.log(text);
+        var words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 1,
+          lineHeight = 1.2, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")) || 0,
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (vis.getTextWidth(tspan.node()) > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", (++lineNumber * lineHeight + dy) + "em").text(word);
+          }
+        }
+      }
+    });
+  }
+
+  getTextWidth(text, font) {
+    // if given, use cached canvas for better performance
+    // else, create new canvas
+    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    var context = canvas.getContext("2d");
+    context.font = font;
+    var metrics = context.measureText(text);
+    return metrics.width;
+  };
 
   getClassPropertyText(klass) {
     let vis = this;
@@ -103,8 +139,11 @@ class Detail {
       // Return N/A for empty fields
       if (!klass[prop[0]] || klass[prop[0]].length < 1) label += ' N/A';
 
+      // Deconstruct code smells
+      if (prop[1] == 'Code smells') label += `${vis.getSmellsText(klass)}`;
+
       // Deconstruct imports
-      if (prop[1] == 'Imports') label += `${vis.getImportText(klass)}`;
+      else if (prop[1] == 'Imports') label += `${vis.getImportText(klass)}`;
 
       // Deconstruct methods
       else if (prop[1] == 'Methods') label += `${vis.getMethodText(klass)}`;
@@ -120,6 +159,18 @@ class Detail {
 
     return label;
   };
+
+  getSmellsText(klass) {
+    let text = '';
+
+    Object.entries(klass.smells).forEach((s) => {
+      const smell = s[1];
+      text += '</p><p>';
+      text += `<u>${smell.name}</u>: ${smell.description}`;
+    });
+
+    return text;
+  }
 
   getMethodText(klass) {
     let text = '';

@@ -136,6 +136,8 @@ const formatData = (data) => {
   collectionSet.clear();
   let links = [];
 
+  console.log(data);
+
   if (data.links) {
     data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {
@@ -145,6 +147,20 @@ const formatData = (data) => {
             target: cname,
             type: formatType(dependency),
           });
+        });
+      });
+    });
+  }
+
+  if (data.classes) {
+    data.classes.forEach((c, idx) => {
+      const smellsArr = c.Information.trim().split('\n').slice(1);
+      c.smells = [];
+      smellsArr.forEach((smell) => {
+        const parts = smell.split(':');
+        c.smells.push({
+          name: parts[0],
+          description: parts.slice(1).join().trim(),
         });
       });
     });

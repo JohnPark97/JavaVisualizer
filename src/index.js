@@ -60,6 +60,10 @@ const main = async () => {
   console.log(data);
   visualize(data);
 
+  window.addEventListener('resize', () => {
+    visualize(data);
+  });
+
   // Allow user to visualize another repo
   // main();
 };
