@@ -40,8 +40,6 @@ class Town {
       containerWidth: vis.config.containerWidth / 5,
       containerHeight: vis.config.containerHeight / 2,
     });
-
-    vis.displayed = false;
   }
 
   update() {
@@ -66,12 +64,6 @@ class Town {
     vis.legend.data = vis.data;
     vis.legend.colourScale = vis.colourScale;
     vis.legend.update();
-
-    if (!vis.displayed) {
-      vis.displayed = !vis.displayed;
-      const msg = d3.max(vis.garbageScale.domain()) == 0 ? 'Your code rocks!' : 'Your code smells!';
-      setTimeout(() => window.alert(msg), 3000);
-    }
 
     vis.render();
   }
