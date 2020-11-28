@@ -33,31 +33,30 @@ const handleFileSubmission = () => {
 
 const main = async () => {
   let res, data, zip;
-  // try {
-  //   res = await Promise.race([getRepoURL(), handleFileSubmission()]);
+  try {
+    res = await Promise.race([getRepoURL(), handleFileSubmission()]);
 
-  //   if (typeof res == "object") {
-  //     // is a zip file
-  //     zip = await readFile(res);
-  //     data = await postZip(zip);
-  //   } else {
-  //     // is a repoURL
-  //     data = await getData(res);
-  //   }
+    if (typeof res == "object") {
+      // is a zip file
+      zip = await readFile(res);
+      data = await postZip(zip);
+    } else {
+      // is a repoURL
+      data = await getData(res);
+    }
 
-  //   if (!data.classes || data.classes.length == 0) {
-  //     window.alert('This project has no Java classes!');
-  //     return main();
-  //   }
-  // } catch (err) {
-  //   console.log(err);
-  //   window.alert('An error has occurred, please try again.');
-  //   return main();
-  // }
+    if (!data.classes || data.classes.length == 0) {
+      window.alert('This project has no Java classes!');
+      return main();
+    }
+  } catch (err) {
+    console.log(err);
+    window.alert('An error has occurred, please try again.');
+    return main();
+  }
 
   data = await httpRequest('assets/project.json');
   data = formatData(data);
-  console.log(data);
   visualize(data);
 
   window.addEventListener('resize', () => {
@@ -65,7 +64,7 @@ const main = async () => {
   });
 
   // Allow user to visualize another repo
-  // main();
+  main();
 };
 
 main();

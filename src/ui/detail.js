@@ -91,7 +91,6 @@ class Detail {
     text.each(() => {
       var text = d3.select(this);
       if (text.length > 0) {
-        console.log(text);
         var words = text.text().split(/\s+/).reverse(),
           word,
           line = [],

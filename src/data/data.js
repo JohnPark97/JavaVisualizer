@@ -136,8 +136,6 @@ const formatData = (data) => {
   collectionSet.clear();
   let links = [];
 
-  console.log(data);
-
   if (data.links) {
     data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {

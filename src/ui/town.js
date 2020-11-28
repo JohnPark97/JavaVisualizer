@@ -16,7 +16,7 @@ class Town {
     d3.selectAll(`${vis.config.parentElement} *`).remove();
 
     vis.svg = d3.select(vis.config.parentElement)
-      .attr('width', vis.config.containerWidth)
+      .attr('width', vis.config.containerWidth - 100)
       .attr('height', vis.config.containerHeight);
 
     vis.border = vis.svg.append('rect')
