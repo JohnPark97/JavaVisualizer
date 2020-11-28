@@ -59,18 +59,17 @@ public class JavaCodeChecker {
 
     }
 
-    //check if method has too many parameter (could be due to data clumping)
+    //check if method has too many parameter
     public void checkTooManyParameters(JavaClass jc, JavaMethod jm){
         Integer numberOfParameters = jm.getParameterList().size();
         if(numberOfParameters > MaxParameterLength){
-            String codeSmell = jc.getInformation() + "Too Many Parameters/Data Clump: "+ jm.getName() +
+            String codeSmell = jc.getInformation() + "Too Many Parameters: "+ jm.getName() +
                     " Method has too many parameters. Exceeding the max parameter: "+MaxParameterLength +".\n";
             jc.setInformation(codeSmell);
         }
     }
-
+//check if method has any data clumping
     public void checkDataClump(JavaClass jc){
-
             String CodeSmells = "";
             List<List<JavaParameter>> ListofparameterList = new ArrayList<List<JavaParameter>>();
             List<String> MethodNames = new ArrayList<String>();
@@ -161,8 +160,6 @@ public class JavaCodeChecker {
             }
         }
         LargestnumberofParameters = largestnumberofParameters;
-        System.out.println(LargestnumberofParameters);
-
         JavaParameter[] parameterArray = new JavaParameter[newParameters.size()];
         for(int i = 0; i < newParameters.size(); i++){
             parameterArray[i] = newParameters.get(i);
@@ -171,11 +168,8 @@ public class JavaCodeChecker {
         if(LargestnumberofParameters >= 2) {
             combo = getallCombos(parameterArray);
         }
-
         List<List<JavaParameter>> filtercombos = combo.stream()
                 .filter(p -> LargestnumberofParameters >= p.size()).collect((Collectors.toList()));
-
-        System.out.println(filtercombos.size());
 
         for (List<JavaParameter> jp : filtercombos) {
             Integer count = 0;
@@ -197,42 +191,31 @@ public class JavaCodeChecker {
             }
         }
     }
-    public List<List<JavaParameter>>  getallCombos(JavaParameter[] args){
-        List<List<JavaParameter>> powerSet = new LinkedList<List<JavaParameter>>();
-
-        for (int i = 1; i <= args.length; i++)
-            powerSet.addAll(combinationparameters(Arrays.asList(args),i));
-        return powerSet;
+    public List<List<JavaParameter>>  getallCombos(JavaParameter[] jps){
+        List<List<JavaParameter>> listListofparameter = new LinkedList<List<JavaParameter>>();
+        for (int i = 1; i <= jps.length; i++)
+            listListofparameter .addAll(combinationparameters(Arrays.asList(jps),i));
+        return listListofparameter ;
     }
 
-    public static List<List<JavaParameter>> combinationparameters(List<JavaParameter> values, int size) {
-
+    public static List<List<JavaParameter>> combinationparameters(List<JavaParameter> jplist, int size) {
         if (0 == size) {
             return Collections.singletonList(Collections.<data.JavaParameter> emptyList());
         }
-
-        if (values.isEmpty()) {
-            return Collections.emptyList();
+        if (jplist.isEmpty()) {
+            return new ArrayList<List<JavaParameter>>();
         }
-
-        List<List<JavaParameter>> combination = new LinkedList<List<JavaParameter>>();
-
-        JavaParameter actual = values.iterator().next();
-
-        List<JavaParameter> subSet = new LinkedList<JavaParameter>(values);
-        subSet.remove(actual);
-
-        List<List<JavaParameter>> subSetCombination = combinationparameters(subSet, size - 1);
-
-        for (List<JavaParameter> set : subSetCombination) {
-            List<JavaParameter> newSet = new LinkedList<JavaParameter>(set);
-            newSet.add(0, actual);
-            combination.add(newSet);
+        List<List<JavaParameter>> parametercombination = new LinkedList<List<JavaParameter>>();
+        JavaParameter actual = jplist.iterator().next();
+        List<JavaParameter> parametersubset = new LinkedList<JavaParameter>(jplist);
+        parametersubset.remove(actual);
+        for (List<JavaParameter> set : combinationparameters(parametersubset , size - 1)) {
+            List<JavaParameter> newparameterSet = new LinkedList<JavaParameter>(set);
+            newparameterSet.add(0, actual);
+            parametercombination.add(newparameterSet);
         }
-
-        combination.addAll(combinationparameters(subSet, size));
-
-        return combination;
+        parametercombination.addAll(combinationparameters(parametersubset , size));
+        return parametercombination;
     }
 
     public boolean ListinParameterlist(List<JavaParameter> jpIn, List<JavaParameter>  jpOut){
