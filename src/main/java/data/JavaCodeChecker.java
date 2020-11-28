@@ -193,7 +193,7 @@ public class JavaCodeChecker {
     }
     public List<List<JavaParameter>>  getallCombos(JavaParameter[] jps){
         List<List<JavaParameter>> listListofparameter = new LinkedList<List<JavaParameter>>();
-        for (int i = 1; i <= jps.length; i++)
+        for (int i = 1; i <= LargestnumberofParameters + 1; i++)
             listListofparameter .addAll(combinationparameters(Arrays.asList(jps),i));
         return listListofparameter ;
     }
