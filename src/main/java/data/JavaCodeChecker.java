@@ -15,6 +15,7 @@ public class JavaCodeChecker {
     public int MaxConditionalStmt = 2;//2
     public int MaxDereferences = 2;//2
     public int MaxDataClump = 2;
+    public int LargestnumberofParameters = 0;
 
 
     public JavaCodeChecker() { }
@@ -69,55 +70,57 @@ public class JavaCodeChecker {
     }
 
     public void checkDataClump(JavaClass jc){
-        String CodeSmells = "";
-        List<List<JavaParameter>> ListofparameterList = new ArrayList<List<JavaParameter>>();
-        List<String> MethodNames = new ArrayList<String>();
-        List<JavaParameter> parameters = new ArrayList<JavaParameter>();
 
-        for(JavaMethod jm: jc.getMethods()){
-            ListofparameterList.add(jm.getParameterList());
-            MethodNames.add(jm.getName());
-        }
-        for(List<JavaParameter> jplist: ListofparameterList){
-            for(JavaParameter jp: jplist){
-                if(!inParameterlist(parameters,jp)) {
-                    parameters.add(jp);
+            String CodeSmells = "";
+            List<List<JavaParameter>> ListofparameterList = new ArrayList<List<JavaParameter>>();
+            List<String> MethodNames = new ArrayList<String>();
+            List<JavaParameter> parameters = new ArrayList<JavaParameter>();
+
+            for (JavaMethod jm : jc.getMethods()) {
+                ListofparameterList.add(jm.getParameterList());
+                MethodNames.add(jm.getName());
+            }
+            for (List<JavaParameter> jplist : ListofparameterList) {
+                for (JavaParameter jp : jplist) {
+                    if (!inParameterlist(parameters, jp)) {
+                        parameters.add(jp);
+                    }
                 }
             }
-        }
-        HashMap<List<JavaParameter>,Integer> DataClumpTable = new HashMap<>();
-        List<JavaParameter> jplist = new ArrayList<>();
-        checkingClump(ListofparameterList,parameters,DataClumpTable,jplist);
+            HashMap<List<JavaParameter>, Integer> DataClumpTable = new HashMap<>();
+            List<JavaParameter> jplist = new ArrayList<>();
+            checkingClump(ListofparameterList, parameters, DataClumpTable, jplist);
 
-        HashMap<List<JavaParameter>, Integer> DataClumpfinals = new HashMap<>();
-        for(int i = 0; i < DataClumpTable.size(); i++ ) {
+            HashMap<List<JavaParameter>, Integer> DataClumpfinals = new HashMap<>();
+
             Map<List<JavaParameter>, Integer> result = DataClumpTable.entrySet().stream()
                     .filter(map -> MaxDataClump <= map.getValue() && 2 <= map.getKey().size())
                     .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
             DataClumpfinals.putAll(result);
 
-        }
 
-        Set<List<JavaParameter>> jpkeys = DataClumpfinals.keySet();
-        for(List<JavaParameter> key: jpkeys ){
-            Integer count = DataClumpfinals.get(key);
-            List<String> DataClumpMethods = new ArrayList<String>();
-            List<String> DataClumpParameterNames = new ArrayList<String>();
-            for(JavaParameter p: key){
-                DataClumpParameterNames.add(p.getType()+" "+p.getName());
-            }
-            Integer i = 0;
-            for(List<JavaParameter> jp: ListofparameterList){
-                if(ListinParameterlist(key,jp)){
-                    DataClumpMethods.add(MethodNames.get(i));
+            Set<List<JavaParameter>> jpkeys = DataClumpfinals.keySet();
+            for (List<JavaParameter> key : jpkeys) {
+                Integer count = DataClumpfinals.get(key);
+                List<String> DataClumpMethods = new ArrayList<String>();
+                List<String> DataClumpParameterNames = new ArrayList<String>();
+                for (JavaParameter p : key) {
+                    DataClumpParameterNames.add(p.getType() + " " + p.getName());
                 }
-                i++;
+                Integer i = 0;
+                for (List<JavaParameter> jp : ListofparameterList) {
+                    if (ListinParameterlist(key, jp)) {
+                    }
+                    DataClumpMethods = jc.getMethods().stream()
+                            .filter(m -> ListinParameterlist(key, m.getParameterList()))
+                            .map(JavaMethod::getName).collect(Collectors.toList());
+                    i++;
+                }
+                CodeSmells = CodeSmells + "Data Clump between Methods: " + DataClumpMethods + " with parameters: "
+                        + DataClumpParameterNames + ".\n";
             }
-            CodeSmells = CodeSmells + "Data Clump between Methods: " +DataClumpMethods + " with parameters: "
-                    + DataClumpParameterNames + ".\n";
-        }
-        String finalcodeSmell = jc.getInformation() + CodeSmells;
-        jc.setInformation(finalcodeSmell);
+            String finalcodeSmell = jc.getInformation() + CodeSmells;
+            jc.setInformation(finalcodeSmell);
     }
 
     public void checkingClump(List<List<JavaParameter>> ListofparameterList,
@@ -125,17 +128,34 @@ public class JavaCodeChecker {
                               HashMap<List<JavaParameter>,Integer> IDataClumpTable,
                               List<JavaParameter> list){
         List<JavaParameter> newParameters = new ArrayList<JavaParameter>();
+
         for(JavaParameter x: parameters){
             newParameters.add(x);
         }
+        Integer largestnumberofParameters = 0;
+        for(List<JavaParameter> jps: ListofparameterList){
+            if(largestnumberofParameters <= jps.size()){
+                largestnumberofParameters = jps.size();
+            }
+        }
+        LargestnumberofParameters = largestnumberofParameters;
+        System.out.println(LargestnumberofParameters);
+
         JavaParameter[] parameterArray = new JavaParameter[newParameters.size()];
         for(int i = 0; i < newParameters.size(); i++){
             parameterArray[i] = newParameters.get(i);
         }
-        List<List<JavaParameter>> combo = getallCombos(parameterArray);
-        System.out.println(combo.size());
+        List<List<JavaParameter>> combo = new ArrayList<List<JavaParameter>>();
+        if(LargestnumberofParameters >= 2) {
+            combo = getallCombos(parameterArray);
+        }
 
-        for (List<JavaParameter> jp : combo) {
+        List<List<JavaParameter>> filtercombos = combo.stream()
+                .filter(p -> LargestnumberofParameters >= p.size()).collect((Collectors.toList()));
+
+        System.out.println(filtercombos.size());
+
+        for (List<JavaParameter> jp : filtercombos) {
             Integer count = 0;
             boolean isSubset = false;
             for(List<JavaParameter> key: IDataClumpTable.keySet()) {
@@ -147,13 +167,10 @@ public class JavaCodeChecker {
                 }
             }
             if(!isSubset) {
-                for (List<JavaParameter> jplist : ListofparameterList) {
-                    if (ListinParameterlist(jp, jplist)) {
-                        count++;
-                    }
-                }
-                if(count >= MaxDataClump) {
-                    IDataClumpTable.put(jp, count);
+                List<List<JavaParameter>> result = ListofparameterList.stream()
+                        .filter(p -> ListinParameterlist(jp,p)).collect((Collectors.toList()));
+                if(result.size() >= MaxDataClump) {
+                    IDataClumpTable.put(jp, result.size());
                 }
             }
         }
@@ -233,7 +250,6 @@ public class JavaCodeChecker {
     public void checkComplicatedConditional(JavaClass jc, JavaMethod jm) {
         String CodeSmells = "";
         for (Statement s : jm.getStatements()) {
-            System.out.println(s);
             ComplicatedConditionalVisitor javaCodeCheckerVisitor = new ComplicatedConditionalVisitor();
             List<ConditionalTracker> numberofConditional = new ArrayList<ConditionalTracker>();
             s.accept(javaCodeCheckerVisitor, numberofConditional);
@@ -252,7 +268,6 @@ public class JavaCodeChecker {
     public void checkFeatureEnvy(JavaClass jc, JavaMethod jm) {
         String CodeSmells = "";
         for (Statement s : jm.getStatements()) {
-            System.out.println(s);
             FeatureEnvyVisitor featureEnvyVisitor = new FeatureEnvyVisitor();
             List<FeatureEnvyTracker> numberofFeatureEnvy = new ArrayList<FeatureEnvyTracker>();
             s.accept(featureEnvyVisitor, numberofFeatureEnvy);

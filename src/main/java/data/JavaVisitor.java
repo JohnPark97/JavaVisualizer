@@ -191,11 +191,11 @@ public class JavaVisitor extends VoidVisitorAdapter<JavaClass> {
         NodeList<ClassOrInterfaceType> implementedTypes = cid.getImplementedTypes();
 
         for(ClassOrInterfaceType it: implementedTypes){
-            extension.add(it.getName().getIdentifier());
+            implement.add(it.getName().getIdentifier());
         }
 
         for(ClassOrInterfaceType et: extendedTypes){
-            implement.add(et.getName().getIdentifier());
+            extension.add(et.getName().getIdentifier());
         }
         arg.setClassName(className);
         arg.setInterface(IsInterface);
