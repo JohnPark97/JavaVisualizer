@@ -109,7 +109,7 @@ public class JavaCodeChecker {
             Integer i = 0;
             for(List<JavaParameter> jp: ListofparameterList){
                 if(ListinParameterlist(key,jp)){
-                   DataClumpMethods.add(MethodNames.get(i));
+                    DataClumpMethods.add(MethodNames.get(i));
                 }
                 i++;
             }
@@ -133,15 +133,28 @@ public class JavaCodeChecker {
             parameterArray[i] = newParameters.get(i);
         }
         List<List<JavaParameter>> combo = getallCombos(parameterArray);
-        if(combo.size() <= 50) {
-            for (List<JavaParameter> jp : combo) {
-                Integer count = 0;
+        System.out.println(combo.size());
+
+        for (List<JavaParameter> jp : combo) {
+            Integer count = 0;
+            boolean isSubset = false;
+            for(List<JavaParameter> key: IDataClumpTable.keySet()) {
+                if (jp.containsAll(key)) {
+                    Integer j = IDataClumpTable.get(key);
+                    if (j < MaxDataClump) {
+                        isSubset = true;
+                    }
+                }
+            }
+            if(!isSubset) {
                 for (List<JavaParameter> jplist : ListofparameterList) {
                     if (ListinParameterlist(jp, jplist)) {
                         count++;
                     }
                 }
-                IDataClumpTable.put(jp, count);
+                if(count >= MaxDataClump) {
+                    IDataClumpTable.put(jp, count);
+                }
             }
         }
     }
@@ -216,7 +229,7 @@ public class JavaCodeChecker {
         return name1.equals(name2) && type1.equals(type2);
     }
 
-   //check if method has Complicated conditional
+    //check if method has Complicated conditional
     public void checkComplicatedConditional(JavaClass jc, JavaMethod jm) {
         String CodeSmells = "";
         for (Statement s : jm.getStatements()) {
