@@ -48,6 +48,34 @@ class Detail {
       .style('font-weight', 'bold')
       .text('Details');
 
+    const buttonHeight = 25;
+    const buttonWidth = buttonHeight * 4.7;
+    vis.text = 'Project View';
+    vis.buttonG = vis.detail.append('g')
+      .attr('transform', `translate(${vis.config.containerWidth - buttonWidth - 25}, ${buttonHeight / 2})`)
+      .on('click', function () {
+        vis.displayType = vis.displayType === 'all' ? null : 'all';
+
+        vis.text = vis.text === 'Project View' ? 'Class View' : 'Project View';
+        d3.select(this).select('text')
+          .text(vis.text)
+        vis.update();
+      });
+    vis.buttonG.append('rect')
+      .attr('class', 'button')
+      .attr('width', buttonWidth)
+      .attr('height', buttonHeight)
+      .attr('fill', '#ccc')
+      .attr('stroke', 'black')
+      .attr('ry', 6)
+      .attr('rx', 6)
+    vis.buttonG.append('text')
+      .attr('y', buttonHeight - buttonHeight / 5)
+      .attr('x', buttonHeight / 5)
+      .text('Project view')
+      .attr('class', 'button-label')
+      .attr('fill', 'black');
+
     vis.detail.hint = vis.detail.append('text')
       .attr('class', 'hint')
       .attr('y', 75)
@@ -70,6 +98,8 @@ class Detail {
       class: klass,
       containerWidth: vis.config.containerWidth,
       containerHeight: vis.config.containerHeight / 2,
+      displayType: vis.displayType,
+      titleYOffset: vis.config.titleYOffset,
     });
 
     vis.bargraph.update();
@@ -78,10 +108,19 @@ class Detail {
   render() {
     let vis = this;
 
-    for (let klass of vis.data.classes) {
-      if ((!vis.hoverClass) || (klass.name != vis.hoverClass)) continue;
-      vis.renderClassDetail(klass);
-      vis.renderBarGraph(klass);
+    if (vis.displayType === 'all') {
+      console.log(107)
+      vis.detail.selectAll('.hint').attr('display', 'none');
+      vis.detail.selectAll('.detailText').remove();
+
+      vis.renderBarGraph(vis.data.smellCountSum);
+    } else {
+      console.log(vis.hoverClass);
+      for (let klass of vis.data.classes) {
+        if ((!vis.hoverClass) || (klass.name != vis.hoverClass)) continue;
+        vis.renderClassDetail(klass);
+        vis.renderBarGraph(klass);
+      }
     }
   }
 

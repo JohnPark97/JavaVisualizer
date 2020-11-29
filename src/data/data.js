@@ -152,6 +152,7 @@ const formatData = (data) => {
     });
   }
 
+  const smellSum = {};
   if (data.classes) {
     data.classes.forEach((c, idx) => {
       const smellsArr = c.Information.trim().split('\n').slice(1);
@@ -169,6 +170,9 @@ const formatData = (data) => {
 
         if (!smellCount[name]) smellCount[name] = 1;
         else smellCount[name]++;
+
+        if (!smellSum[name]) smellSum[name] = 1;
+        else smellSum[name]++;
       });
 
       c.smellCount = []
@@ -183,9 +187,20 @@ const formatData = (data) => {
     });
   }
 
+  const smellCountSum = [];
+  if (Object.keys(smellSum).length > 0) {
+    Object.keys(smellSum).forEach((smell) => {
+      smellCountSum.push({
+        name: smell,
+        count: smellSum[smell],
+      });
+    });
+  }
+
   return {
     classes: data.classes,
     links,
     collections: Array.from(collectionSet),
+    smellCountSum,
   };
 }

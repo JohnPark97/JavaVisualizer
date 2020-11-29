@@ -146,10 +146,6 @@ class Town {
       .on('mouseover', (d) => {
         vis.detail.hoverClass = d.name;
         vis.detail.update();
-      })
-      .on('mouseout', () => {
-        vis.detail.hoverClass = null;
-        vis.detail.update();
       });
 
     vis.simulation.force('link')

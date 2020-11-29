@@ -4,6 +4,7 @@ class BarGraph {
       selection: _config.selection,
       containerWidth: _config.containerWidth || 1000,
       containerHeight: _config.containerHeight || 600,
+      titleYOffset: _config.titleYOffset,
     }
     this.class = _config.class;
     this.margin = {
@@ -12,11 +13,16 @@ class BarGraph {
       top: 25,
       bottom: 25,
     };
+    this.displayType = _config.displayType;
     this.init();
   }
 
   init() {
     let vis = this;
+
+    vis.dataToDisplay = (vis.displayType === 'all') ? vis.class : vis.class.smellCount;
+    vis.dataToDisplay.sort((a, b) => b.count - a.count);
+    vis.dataToDisplay = (vis.displayType === 'all') ? vis.dataToDisplay.slice(0, 5) : vis.dataToDisplay;
 
     d3.select('.bargraph').remove();
 
@@ -25,12 +31,10 @@ class BarGraph {
       .attr('class', 'bargraph')
       .attr('width', vis.config.containerWidth)
       .attr('height', vis.config.containerHeight)
-      .attr('transform', `translate(0, ${vis.config.containerHeight})`);
+      .attr('transform', `translate(0, ${vis.displayType === 'all' ? vis.config.titleYOffset + 10 : vis.config.containerHeight})`);
 
     vis.width = vis.config.containerWidth - vis.margin.left - vis.margin.right;
-    // vis.width = vis.config.containerWidth;
     vis.height = vis.config.containerHeight - vis.margin.top - vis.margin.bottom;
-    // vis.height = vis.config.containerHeight;
 
     vis.border = vis.svg.append('rect')
       .attr('width', vis.config.containerWidth)
@@ -45,9 +49,9 @@ class BarGraph {
       .attr('class', 'chart');
 
     vis.title = vis.chart.append('text')
-      .attr('x', vis.config.containerWidth / 3)
+      .attr('x', vis.config.containerWidth / 4)
       .attr('y', -vis.margin.top / 2)
-      .text('Code Smell Occurences')
+      .text(`${(vis.displayType === 'all') ? 'Top 5 ' : ''}Code Smell Occurences`)
 
     vis.yAxisG = vis.chart.append('g')
       .attr('class', 'yAxisG')
@@ -61,7 +65,7 @@ class BarGraph {
     vis.xValue = d => d.name;
 
     vis.yScale = d3.scaleLinear()
-      .domain([0, d3.max(vis.class.smellCount, vis.yValue)])
+      .domain([0, d3.max(vis.dataToDisplay, vis.yValue)])
       .range([vis.height, 0])
       .nice();
     const yAxis = d3.axisLeft(vis.yScale)
@@ -95,16 +99,25 @@ class BarGraph {
   render() {
     let vis = this;
 
+    if (vis.dataToDisplay.length < 1) {
+      vis.chart.append('text')
+        .text('No code smells in this class')
+        .attr('x', vis.width / 4)
+        .attr('y', vis.height / 2);
+    }
+
     const xScale = d3.scaleBand()
-      .domain(vis.class.smellCount.map(d => d.name))
+      .domain(vis.dataToDisplay.map(d => d.name))
       .range([0, vis.width])
       .padding(0.2);
 
     const xAxis = d3.axisBottom(xScale);
     vis.xAxisG.call(xAxis);
 
+    let data = vis.dataToDisplay.sort((a, b) => b.count - a.count);
+    data = (vis.displayType === 'all') ? data.slice(0, 5) : data;
     const rects = vis.chart.selectAll('rect')
-      .data(vis.class.smellCount.sort((a, b) => b.count - a.count));
+      .data(data);
     rects.enter().append('rect')
       .attr('class', 'bar')
       .merge(rects)
