@@ -57,7 +57,7 @@ class Town {
       .domain(vis.data.collections);
 
     const customColours = vis.colourScale.range();
-    const index = vis.data.collections.findIndex((c) => c === 'None');
+    const index = vis.data.collections.findIndex((c) => c === 'Regular dependency');
     customColours[index] = 'black';
     vis.colourScale.range(customColours);
 

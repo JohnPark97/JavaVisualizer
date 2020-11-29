@@ -118,15 +118,17 @@ const formatType = (dependency) => {
   const name = dependency.DependencyName;
 
   if (collections.length == 0) {
-    collectionSet.add('None');
-    return ['None'];
+    const label = 'Regular dependency'
+    collectionSet.add(label);
+    return [label];
   }
 
   const types = [];
   collections.forEach((c) => {
     if (c[name] && c[name].length > 0 && c[name][0].Collection) {
-      types.push(c[name][0].Collection);
-      collectionSet.add(c[name][0].Collection);
+      const collectionName = `${c[name][0].Collection}<E>`;
+      types.push(collectionName);
+      collectionSet.add(collectionName);
     }
   });
   return types;
