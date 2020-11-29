@@ -62,6 +62,7 @@ public class JSONConvertor {
 
     public static JSONObject JSONDependency(JavaClass jc) {
         JSONObject jsonDep = new JSONObject();
+        jsonDep.put("ID",jc.getID());
         jsonDep.put("Class",jc.getClassName());
         jsonDep.put("Implementations", jc.getImplements());
         jsonDep.put("Extensions", jc.getExtensions());

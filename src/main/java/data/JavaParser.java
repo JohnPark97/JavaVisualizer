@@ -34,10 +34,11 @@ public class JavaParser {
         }
 
         List<JavaClass> ListOfJavaClasses = new ArrayList<JavaClass>();
-
+        Integer index = 0;
         for (CompilationUnit cu : compilationUnits) {
             //visit the ast structure and get the info that we want
             JavaClass javaClass = new JavaClass();
+            javaClass.setID(index);
             javaClass.setDependencies(new ArrayList<JavaDependency>());
             javaClass.setImports(new ArrayList<String>());
             javaClass.setGlobalVariables(new ArrayList<JavaVariable>());
@@ -48,6 +49,7 @@ public class JavaParser {
             cu.accept(visitor, javaClass);
             //add it to the list of java classes
             ListOfJavaClasses.add(javaClass);
+            index++;
         }
         //Checking the dependencies
         checkDependencies(ListOfJavaClasses);
@@ -56,7 +58,7 @@ public class JavaParser {
         javaCodeChecker.checkClass(ListOfJavaClasses);
 
         JSONConvertor convertor = new JSONConvertor();
-        JSONObject jsonProject = JSONConvertor.createJSON(ListOfJavaClasses);
+        JSONObject jsonProject = convertor.createJSON(ListOfJavaClasses);
 
         try (FileWriter file = new FileWriter("assets/project.json")) {
 
