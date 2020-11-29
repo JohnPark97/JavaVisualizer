@@ -91,16 +91,24 @@ class Legend {
       .text('Dependency Collection type')
       .attr('text-decoration', 'underline')
       .attr('font-weight', 'bold')
+
     vis.data.collections.forEach((c, idx) => {
+      const text = c;
       const yOffset = dependencyTextYOffset + (30 * idx);
       const lineYOffset = yOffset + 5;
-      vis.collectionG.append('text')
-        .text(c)
+      const svg = vis.collectionG;
+
+      svg.append('text')
+        .text(text)
         .attr('transform', `translate(0, ${yOffset})`);
-      vis.collectionG.append('path')
+      svg.append('path')
         .attr('d', d3.line()([[0, lineYOffset], [lineEnd, lineYOffset]]))
-        .attr('stroke', vis.colourScale(c))
+        .attr('stroke', vis.colourScale(text))
         .attr('stroke-width', 3);
+      svg.append('path')
+        .attr('d', d3.line()([[lineEnd, lineYOffset - 15], [lineEnd, lineYOffset + 15], [vis.config.containerWidth - 25, lineYOffset]]))
+        .attr('fill', 'black')
+        .attr('stroke', 'black');
     });
   }
 }

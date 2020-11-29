@@ -75,7 +75,7 @@ const getHashMap = async (url) => {
 
   // Clear previously returned list
   returnedList = [];
-  
+
   await inputHashMap(listOfFiles);
 
   console.log("returnedList");
@@ -135,7 +135,7 @@ const formatType = (dependency) => {
 const formatData = (data) => {
   collectionSet.clear();
   let links = [];
-
+  console.log(data);
   if (data.links) {
     data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {
