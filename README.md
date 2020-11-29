@@ -12,6 +12,10 @@ To start using this project, you need to get your computer configured so you can
 
 1. [Install http-server](https://www.npmjs.com/package/http-server) To be able to start a server locally
 
+1. Run Maven `clean` and `install` on the repository with jdk version 15+
+
+1. Run Server.java 
+
 1. In terminal, run `http-server -p 8080` while in the project repository 
 
 1. You can access it then in browser with `http://localhost:8080/`
