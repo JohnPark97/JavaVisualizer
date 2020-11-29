@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class JavaClass {
+    Integer ID;
     String ClassName;
     Boolean Interface;
     Boolean IsEnum;
@@ -23,6 +24,14 @@ public class JavaClass {
     String Information;
 
     public JavaClass(){}
+
+    public Integer getID() {
+        return ID;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
 
     public String getClassName() {
         return ClassName;

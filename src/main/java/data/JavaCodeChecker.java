@@ -117,10 +117,10 @@ public class JavaCodeChecker {
                 CodeSmellList.put(DataClumpMethods,DataClumpParameterNames);
             }
 
-            CodeSmellList = removeSubsetDataClump(CodeSmellList);
+            //CodeSmellList = removeSubsetDataClump(CodeSmellList);
             Set<List<String>> methodkeys = CodeSmellList.keySet();
         for(List<String> key: methodkeys){
-            CodeSmells = CodeSmells + "Data Clump between Methods: " + key + " with parameters: "
+            CodeSmells = CodeSmells + "Data Clump : "+"Data Clumping between methods " + key + " with parameters: "
                     + CodeSmellList.get(key) + ".\n";
         }
             String finalcodeSmell = jc.getInformation() + CodeSmells;

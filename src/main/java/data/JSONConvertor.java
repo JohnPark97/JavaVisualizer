@@ -28,6 +28,7 @@ public class JSONConvertor {
 
     public static JSONObject JSONClass(JavaClass jc) {
         JSONObject jsonClass = new JSONObject();
+        jsonClass.put("ID", jc.getID());
         jsonClass.put("name", jc.getClassName());
         jsonClass.put("line_count", jc.getLineCount());
         jsonClass.put("IsEnumeration",jc.getEnum());
