@@ -266,21 +266,42 @@ class Town {
   renderSpider() {
     let vis = this;
 
-    vis.nodesG.append('svg:image')
-      .attr('x', d => `-${vis.houseScale(d.line_count) / 2 + vis.houseScale(d.line_count) / 4}`)
-      .attr('y', d => `${-vis.houseScale(d.line_count)}`)
-      .attr('width', d => vis.houseScale(d.line_count))
-      .attr('height', d => vis.houseScale(d.line_count))
-      .attr('xlink:href', 'assets/spider.png');
+    vis.nodes.each(function (d, idx) {
+      const svg = d3.select(this).append('g')
+        .attr('class', 'house');
 
-    const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
-    vis.nodesG.append('svg:image')
-      // .attr('x', d => -vis.garbageScale(d.smells.length))
-      .attr('y', d => -magicNumber(d) / 10 * 9)
-      .attr('x', d => -magicNumber(d) + magicNumber(d))
-      .attr('width', d => magicNumber(d))
-      .attr('height', d => magicNumber(d))
-      .attr('xlink:href', 'assets/cocoon.png');
+      if (vis.trafficScale(d.traffic) > 70) { // 70%
+        svg.append('svg:image')
+          .attr('class', 'house')
+          .attr('x', d => `-${vis.houseScale(d.line_count) / 2 + vis.houseScale(d.line_count) / 4}`)
+          .attr('y', d => `${-vis.houseScale(d.line_count)}`)
+          .attr('width', d => vis.houseScale(d.line_count))
+          .attr('height', d => vis.houseScale(d.line_count))
+          .attr('xlink:href', 'assets/spider.png');
+      } else if (vis.trafficScale(d.traffic) > 40) { // 30%
+        svg.append('svg:image')
+          .attr('x', d => `-${vis.houseScale(d.line_count) / 2 + vis.houseScale(d.line_count) * 1.4}`)
+          .attr('y', d => -vis.houseScale(d.line_count) * 1.7)
+          .attr('width', d => vis.houseScale(d.line_count) + vis.trafficScale(d.traffic))
+          .attr('height', d => vis.houseScale(d.line_count) + vis.trafficScale(d.traffic))
+          .attr('xlink:href', 'assets/spider-big.png');
+      } else {
+        svg.append('svg:image')
+          .attr('x', d => `-${vis.houseScale(d.line_count) / 2 + vis.houseScale(d.line_count) / 2}`)
+          .attr('y', d => `${-vis.houseScale(d.line_count) * 0.7}`)
+          .attr('width', d => vis.houseScale(d.line_count))
+          .attr('height', d => vis.houseScale(d.line_count))
+          .attr('xlink:href', 'assets/spider-reg.png');
+      }
+
+      const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
+      svg.append('svg:image')
+        .attr('y', d => -magicNumber(d) / 10 * 9)
+        .attr('x', d => -magicNumber(d) + magicNumber(d))
+        .attr('width', d => magicNumber(d))
+        .attr('height', d => magicNumber(d))
+        .attr('xlink:href', 'assets/cocoon.png');
+    });
   }
 
   renderNodes() {
