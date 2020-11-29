@@ -40,12 +40,14 @@ class Town {
       containerWidth: vis.config.containerWidth / 5,
       containerHeight: vis.config.containerHeight / 2,
     });
+
+    vis.theme = 'House';
   }
 
   update() {
     let vis = this;
 
-    vis.houseScale = d3.scaleLinear()
+    vis.houseScale = d3.scaleSqrt()
       .domain(d3.extent(vis.data.classes, d => d.line_count))
       .range([10, 100]);
 
@@ -68,11 +70,43 @@ class Town {
     vis.render();
   }
 
-  render() {
+  render(runForceSimulation = true) {
     let vis = this;
 
-    vis.runForceSimulation();
-    vis.renderHouse();
+    if (runForceSimulation) vis.runForceSimulation();
+    vis.renderNodes();
+    vis.renderThemeButton();
+  }
+
+  renderThemeButton() {
+    let vis = this;
+
+    const buttonHeight = 25;
+    const buttonWidth = buttonHeight * 5.6;
+    vis.themeG = d3.select(vis.config.parentElement)
+      .attr('width', vis.config.containerWidth - 100)
+      .attr('height', vis.config.containerHeight)
+      .append('g')
+      .attr('transform', `translate(10, ${vis.config.containerHeight / 2 - buttonHeight - 10})`)
+      .on('click', function () {
+        d3.selectAll('.house').remove();
+        vis.theme = vis.theme === 'House' ? 'Spider' : 'House';
+        vis.render(false);
+      });
+    vis.themeG.append('rect')
+      .attr('class', 'button')
+      .attr('width', buttonWidth)
+      .attr('height', buttonHeight)
+      .attr('fill', '#ccc')
+      .attr('stroke', 'black')
+      .attr('ry', 6)
+      .attr('rx', 6)
+    vis.themeG.append('text')
+      .attr('y', buttonHeight - buttonHeight / 5)
+      .attr('x', buttonHeight / 5)
+      .text('Change theme')
+      .attr('class', 'button-label')
+      .attr('fill', 'black');
   }
 
   runForceSimulation() {
@@ -154,11 +188,7 @@ class Town {
 
   renderHouse() {
     let vis = this;
-
-    // House
-    vis.house = vis.nodes.append('g');
-    vis.house.append('rect')
-      .attr('class', 'house')
+    vis.nodesG.append('rect')
       .attr('width', d => vis.houseScale(d.line_count))
       .attr('height', d => vis.houseScale(d.line_count))
       .attr('y', d => `${vis.houseScale(d.line_count) * -1}`)
@@ -171,14 +201,14 @@ class Town {
       ${vis.houseScale(d.line_count) / 2} -${vis.houseScale(d.line_count) / 2} ${vis.houseScale(d.line_count) / 2}, \
       -${vis.houseScale(d.line_count) / 2} 0 0`;
 
-    vis.house.append('polyline')
+    vis.nodesG.append('polyline')
       .attr('points', trianglePoints)
       .attr('transform', d => `translate(0, ${vis.houseScale(d.line_count) * -1})`)
       .style('fill', (d) => d.IsEnumeration ? 'green' : d.IsInterface ? 'blue' : 'red')
       .style('stroke', 'black');
 
     // Door
-    vis.house.append('rect')
+    vis.nodesG.append('rect')
       .attr('width', d => vis.houseScale(d.line_count) / 4)
       .attr('height', d => vis.houseScale(d.line_count) / 2)
       .attr('x', d => vis.houseScale(d.line_count) / 5 * 2)
@@ -186,38 +216,71 @@ class Town {
       .style('fill', 'brown');
 
     // Windows
-    vis.house.append('rect')
+    vis.nodesG.append('rect')
       .attr('width', d => vis.houseScale(d.line_count) / 4)
       .attr('height', d => vis.houseScale(d.line_count) / 4)
       .attr('x', d => vis.houseScale(d.line_count) / 7)
       .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
       .style('fill', 'white');
-    vis.house.append('rect')
+    vis.nodesG.append('rect')
       .attr('width', d => vis.houseScale(d.line_count) / 4)
       .attr('height', d => vis.houseScale(d.line_count) / 4)
       .attr('x', d => vis.houseScale(d.line_count) / 7 * 4)
       .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
       .style('fill', 'white');
 
-    // House label
-    vis.house.append('rect')
-      .attr('width', 12)
-      .attr('height', d => d.name.length * 9)
-      .attr('transform', d => `translate(0, 13) rotate(-90)`)
-      .style('fill', 'white')
-      .style('opacity', 0.8)
-    vis.house.append('text')
-      .attr('class', 'house-label')
-      .attr('dy', 13) // use font-size instead of 10 for more dynamic?
-      .attr('font-weight', 'bold')
-      .text(d => d.name);
-
     const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
-    vis.house.append('svg:image')
+    vis.nodesG.append('svg:image')
       .attr('x', d => -magicNumber(d))
       .attr('y', d => -magicNumber(d))
       .attr('width', d => magicNumber(d))
       .attr('height', d => magicNumber(d))
       .attr('xlink:href', 'assets/garbage.png');
+  }
+
+  renderSpider() {
+    let vis = this;
+
+    vis.nodesG.append('svg:image')
+      .attr('x', d => `-${vis.houseScale(d.line_count) / 2 + vis.houseScale(d.line_count) / 4}`)
+      .attr('y', d => `${-vis.houseScale(d.line_count)}`)
+      .attr('width', d => vis.houseScale(d.line_count))
+      .attr('height', d => vis.houseScale(d.line_count))
+      .attr('xlink:href', 'assets/spider.png');
+
+    const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
+    vis.nodesG.append('svg:image')
+      // .attr('x', d => -vis.garbageScale(d.smells.length))
+      .attr('y', d => -magicNumber(d) / 10 * 9)
+      .attr('x', d => -magicNumber(d) + magicNumber(d))
+      .attr('width', d => magicNumber(d))
+      .attr('height', d => magicNumber(d))
+      .attr('xlink:href', 'assets/cocoon.png');
+  }
+
+  renderNodes() {
+    let vis = this;
+
+    vis.nodesG = vis.nodes.append('g')
+      .attr('class', 'house');
+
+    if (vis.theme === 'Spider') {
+      vis.renderSpider();
+    } else {
+      vis.renderHouse();
+    }
+
+    // House label
+    vis.nodesG.append('rect')
+      .attr('width', 12)
+      .attr('height', d => d.name.length * 9)
+      .attr('transform', d => `translate(0, 13) rotate(-90)`)
+      .style('fill', 'white')
+      .style('opacity', 0.8)
+    vis.nodesG.append('text')
+      .attr('class', 'house-label')
+      .attr('dy', 13) // use font-size instead of 10 for more dynamic?
+      .attr('font-weight', 'bold')
+      .text(d => d.name);
   }
 }
