@@ -155,14 +155,31 @@ const formatData = (data) => {
   if (data.classes) {
     data.classes.forEach((c, idx) => {
       const smellsArr = c.Information.trim().split('\n').slice(1);
+      const smellCount = {};
       c.smells = [];
+
       smellsArr.forEach((smell) => {
         const parts = smell.split(':');
+        const name = parts[0];
+
         c.smells.push({
-          name: parts[0],
+          name,
           description: parts.slice(1).join().trim(),
         });
+
+        if (!smellCount[name]) smellCount[name] = 1;
+        else smellCount[name]++;
       });
+
+      c.smellCount = []
+      if (Object.keys(smellCount).length > 0) {
+        Object.keys(smellCount).forEach((smell) => {
+          c.smellCount.push({
+            name: smell,
+            count: smellCount[smell],
+          });
+        });
+      }
     });
   }
 

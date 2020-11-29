@@ -39,9 +39,10 @@ class Detail {
       .style('fill', 'white')
       .style('stroke-width', 1);
 
+    vis.config.titleYOffset = 35;
     vis.detail = vis.svg.append('g');
     vis.detail.append('text')
-      .attr('y', 35)
+      .attr('y', vis.config.titleYOffset)
       .attr('x', 10)
       .style('font-size', 25)
       .style('font-weight', 'bold')
@@ -61,29 +62,48 @@ class Detail {
     vis.render();
   }
 
+  renderBarGraph(klass) {
+    let vis = this;
+
+    vis.bargraph = new BarGraph({
+      selection: vis.config.parentElement,
+      class: klass,
+      containerWidth: vis.config.containerWidth,
+      containerHeight: vis.config.containerHeight / 2,
+    });
+
+    vis.bargraph.update();
+  }
+
   render() {
     let vis = this;
 
     for (let klass of vis.data.classes) {
       if ((!vis.hoverClass) || (klass.name != vis.hoverClass)) continue;
-
-      // Hide hint and previous class' details
-      vis.detail.selectAll('.hint').attr('display', 'none');
-      vis.detail.selectAll('.detail').remove();
-
-      vis.detail
-        .append('foreignObject')
-        .attr('class', 'detail')
-        .attr('width', vis.config.containerWidth)
-        .attr('height', vis.config.containerHeight - 35)
-        .attr('y', 35)
-        .attr('x', 10)
-        .attr('overflow', 'auto')
-        .append('xhtml:div')
-        .html(vis.getClassPropertyText(klass))
-        .call(vis.wrap, vis.config.containerWidth);
-    };
+      vis.renderClassDetail(klass);
+      vis.renderBarGraph(klass);
+    }
   }
+
+  renderClassDetail(klass) {
+    let vis = this;
+
+    // Hide hint and previous class' details
+    vis.detail.selectAll('.hint').attr('display', 'none');
+    vis.detail.selectAll('.detailText').remove();
+
+    vis.detail
+      .append('foreignObject')
+      .attr('class', 'detailText')
+      .attr('width', vis.config.containerWidth)
+      .attr('height', vis.config.containerHeight / 2 - vis.config.titleYOffset)
+      .attr('y', 45)
+      .attr('x', 10)
+      .attr('overflow', 'auto')
+      .append('xhtml:div')
+      .html(vis.getClassPropertyText(klass))
+      .call(vis.wrap, vis.config.containerWidth);
+  };
 
   // based on https://bl.ocks.org/mbostock/7555321
   wrap(text, width) {

@@ -119,11 +119,7 @@ class Town {
       .enter().append('line')
       .attr('class', 'link')
       .attr('marker-end', `url(#arrowhead)`)
-      .style('stroke', (d) => {
-        console.log((d.type[0]))
-        console.log(vis.colourScale(d.type[0]))
-        return vis.colourScale(d.type[0])
-      });
+      .style('stroke', (d) => vis.colourScale(d.type[0]));
 
     vis.nodesG = vis.town.append('g')
       .attr('class', 'nodes')
