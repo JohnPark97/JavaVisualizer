@@ -57,7 +57,7 @@ class Town {
       .domain(vis.data.collections);
 
     const customColours = vis.colourScale.range();
-    const index = vis.data.collections.findIndex((c) => c == 'None');
+    const index = vis.data.collections.findIndex((c) => c === 'Regular dependency');
     customColours[index] = 'black';
     vis.colourScale.range(customColours);
 
@@ -81,7 +81,7 @@ class Town {
     vis.svg.append('defs').append('marker')
       .attr('id', 'arrowhead')
       .attr('viewBox', '-0 -5 10 10')
-      .attr('refX', 13)
+      .attr('refX', 9)
       .attr('refY', 0)
       .attr('orient', 'auto')
       .attr('markerWidth', 13)
@@ -112,14 +112,18 @@ class Town {
           .attr('transform', (d) => `translate(${d.x}, ${d.y})`);
       });
 
-    vis.links = vis.town.selectAll('.link')
+    vis.linksG = vis.town.append('g')
+      .attr('class', 'links');
+    vis.links = vis.linksG.selectAll('.link')
       .data(vis.data.links)
       .enter().append('line')
       .attr('class', 'link')
-      .attr('marker-end', 'url(#arrowhead)')
-      .style('stroke', (d) => vis.colourScale(d.type));
+      .attr('marker-end', `url(#arrowhead)`)
+      .style('stroke', (d) => vis.colourScale(d.type[0]));
 
-    vis.nodes = vis.town.selectAll('.node')
+    vis.nodesG = vis.town.append('g')
+      .attr('class', 'nodes')
+    vis.nodes = vis.nodesG.selectAll('.node')
       .data(vis.data.classes)
       .enter().append('g')
       .attr('class', 'node')
@@ -141,10 +145,6 @@ class Town {
       )
       .on('mouseover', (d) => {
         vis.detail.hoverClass = d.name;
-        vis.detail.update();
-      })
-      .on('mouseout', () => {
-        vis.detail.hoverClass = null;
         vis.detail.update();
       });
 

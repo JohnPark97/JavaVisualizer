@@ -75,7 +75,7 @@ const getHashMap = async (url) => {
 
   // Clear previously returned list
   returnedList = [];
-  
+
   await inputHashMap(listOfFiles);
 
   console.log("returnedList");
@@ -118,15 +118,17 @@ const formatType = (dependency) => {
   const name = dependency.DependencyName;
 
   if (collections.length == 0) {
-    collectionSet.add('None');
-    return ['None'];
+    const label = 'Regular dependency'
+    collectionSet.add(label);
+    return [label];
   }
 
   const types = [];
   collections.forEach((c) => {
     if (c[name] && c[name].length > 0 && c[name][0].Collection) {
-      types.push(c[name][0].Collection);
-      collectionSet.add(c[name][0].Collection);
+      const collectionName = `${c[name][0].Collection}<E>`;
+      types.push(collectionName);
+      collectionSet.add(collectionName);
     }
   });
   return types;
@@ -135,7 +137,7 @@ const formatType = (dependency) => {
 const formatData = (data) => {
   collectionSet.clear();
   let links = [];
-
+  console.log(data);
   if (data.links) {
     data.links.forEach((link) => {
       link.Dependencies.forEach((dependency) => {
@@ -150,16 +152,47 @@ const formatData = (data) => {
     });
   }
 
+  const smellSum = {};
   if (data.classes) {
     data.classes.forEach((c, idx) => {
       const smellsArr = c.Information.trim().split('\n').slice(1);
+      const smellCount = {};
       c.smells = [];
+
       smellsArr.forEach((smell) => {
         const parts = smell.split(':');
+        const name = parts[0];
+
         c.smells.push({
-          name: parts[0],
+          name,
           description: parts.slice(1).join().trim(),
         });
+
+        if (!smellCount[name]) smellCount[name] = 1;
+        else smellCount[name]++;
+
+        if (!smellSum[name]) smellSum[name] = 1;
+        else smellSum[name]++;
+      });
+
+      c.smellCount = []
+      if (Object.keys(smellCount).length > 0) {
+        Object.keys(smellCount).forEach((smell) => {
+          c.smellCount.push({
+            name: smell,
+            count: smellCount[smell],
+          });
+        });
+      }
+    });
+  }
+
+  const smellCountSum = [];
+  if (Object.keys(smellSum).length > 0) {
+    Object.keys(smellSum).forEach((smell) => {
+      smellCountSum.push({
+        name: smell,
+        count: smellSum[smell],
       });
     });
   }
@@ -168,5 +201,6 @@ const formatData = (data) => {
     classes: data.classes,
     links,
     collections: Array.from(collectionSet),
+    smellCountSum,
   };
 }
