@@ -93,6 +93,9 @@ class Town {
         d3.selectAll('.house').remove();
         vis.theme = vis.theme === 'House' ? 'Spider' : 'House';
         vis.render(false);
+
+        vis.legend.theme = vis.theme;
+        vis.legend.update();
       });
     vis.themeG.append('rect')
       .attr('class', 'button')
