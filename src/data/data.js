@@ -137,6 +137,9 @@ const formatType = (dependency) => {
 const formatData = (data) => {
   collectionSet.clear();
   let links = [];
+
+  const classTraffic = {};
+
   console.log(data);
   if (data.links) {
     data.links.forEach((link) => {
@@ -147,6 +150,10 @@ const formatData = (data) => {
             target: cname,
             type: formatType(dependency),
           });
+          if (!classTraffic[link.Class]) classTraffic[link.Class] = 1;
+          else classTraffic[link.Class]++;
+          if (!classTraffic[cname]) classTraffic[cname] = 1;
+          else classTraffic[cname]++;
         });
       });
     });
@@ -184,6 +191,8 @@ const formatData = (data) => {
           });
         });
       }
+
+      c.traffic = classTraffic[c.name];
     });
   }
 

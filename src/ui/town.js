@@ -50,13 +50,14 @@ class Town {
     vis.houseScale = d3.scaleSqrt()
       .domain(d3.extent(vis.data.classes, d => d.line_count))
       .range([10, 100]);
-
     vis.garbageScale = d3.scaleLinear()
       .domain(d3.extent(vis.data.classes, d => d.smells.length))
       .range([0, d3.max(vis.houseScale.range())]);
-
     vis.colourScale = d3.scaleOrdinal(d3.schemeCategory10)
       .domain(vis.data.collections);
+    vis.trafficScale = d3.scaleLinear()
+      .domain(d3.extent(vis.data.classes, d => d.traffic))
+      .range([0, 100]);
 
     const customColours = vis.colourScale.range();
     const index = vis.data.collections.findIndex((c) => c === 'Regular dependency');
@@ -188,46 +189,70 @@ class Town {
 
   renderHouse() {
     let vis = this;
-    vis.nodesG.append('rect')
-      .attr('width', d => vis.houseScale(d.line_count))
-      .attr('height', d => vis.houseScale(d.line_count))
-      .attr('y', d => `${vis.houseScale(d.line_count) * -1}`)
-      .style('stroke', 'black')
-      .style('fill', '#ffe88a');
 
-    // Roof
-    const trianglePoints = (d) =>
-      `0 0, ${vis.houseScale(d.line_count)} 0, \
+    vis.nodes.each(function (d, idx) {
+      const svg = d3.select(this).append('g')
+        .attr('class', 'house');
+
+      /* Render a McDonald's based on traffic through a class.
+      Traffic is defined as number of links going to/from a class.
+      Set at x%, as long as class has x% of the maximum amount of 
+      traffic in a project, render a McDonald's*/
+      if (vis.trafficScale(d.traffic) > 70) { // 70%
+        return svg.append('svg:image')
+          .attr('class', 'house')
+          .attr('x', d => -vis.houseScale(d.line_count) / 2)
+          .attr('y', d => -vis.houseScale(d.line_count) * 1.7)
+          .attr('width', d => vis.houseScale(d.line_count) + vis.trafficScale(d.traffic))
+          .attr('height', d => vis.houseScale(d.line_count) + vis.trafficScale(d.traffic))
+          .attr('xlink:href', 'assets/mcdonalds.png');
+      }
+
+      svg.selectAll('.house')
+        .data(d)
+        .enter().append('g')
+
+      svg.append('rect')
+        .attr('width', d => vis.houseScale(d.line_count))
+        .attr('height', d => vis.houseScale(d.line_count))
+        .attr('y', d => `${vis.houseScale(d.line_count) * -1}`)
+        .style('stroke', 'black')
+        .style('fill', '#ffe88a');
+
+      // Roof
+      const trianglePoints = (d) =>
+        `0 0, ${vis.houseScale(d.line_count)} 0, \
       ${vis.houseScale(d.line_count) / 2} -${vis.houseScale(d.line_count) / 2} ${vis.houseScale(d.line_count) / 2}, \
       -${vis.houseScale(d.line_count) / 2} 0 0`;
 
-    vis.nodesG.append('polyline')
-      .attr('points', trianglePoints)
-      .attr('transform', d => `translate(0, ${vis.houseScale(d.line_count) * -1})`)
-      .style('fill', (d) => d.IsEnumeration ? 'green' : d.IsInterface ? 'blue' : 'red')
-      .style('stroke', 'black');
+      svg.append('polyline')
+        .attr('points', trianglePoints)
+        .attr('transform', d => `translate(0, ${vis.houseScale(d.line_count) * -1})`)
+        .style('fill', (d) => d.IsEnumeration ? 'green' : d.IsInterface ? 'blue' : 'red')
+        .style('stroke', 'black');
 
-    // Door
-    vis.nodesG.append('rect')
-      .attr('width', d => vis.houseScale(d.line_count) / 4)
-      .attr('height', d => vis.houseScale(d.line_count) / 2)
-      .attr('x', d => vis.houseScale(d.line_count) / 5 * 2)
-      .attr('y', d => vis.houseScale(d.line_count) / 2 - vis.houseScale(d.line_count))
-      .style('fill', 'brown');
+      // Door
+      svg.append('rect')
+        .attr('width', d => vis.houseScale(d.line_count) / 4)
+        .attr('height', d => vis.houseScale(d.line_count) / 2)
+        .attr('x', d => vis.houseScale(d.line_count) / 5 * 2)
+        .attr('y', d => vis.houseScale(d.line_count) / 2 - vis.houseScale(d.line_count))
+        .style('fill', 'brown');
 
-    // Windows
-    vis.nodesG.append('rect')
-      .attr('width', d => vis.houseScale(d.line_count) / 4)
-      .attr('height', d => vis.houseScale(d.line_count) / 4)
-      .attr('x', d => vis.houseScale(d.line_count) / 7)
-      .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
-      .style('fill', 'white');
-    vis.nodesG.append('rect')
-      .attr('width', d => vis.houseScale(d.line_count) / 4)
-      .attr('height', d => vis.houseScale(d.line_count) / 4)
-      .attr('x', d => vis.houseScale(d.line_count) / 7 * 4)
-      .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
-      .style('fill', 'white');
+      // Windows
+      svg.append('rect')
+        .attr('width', d => vis.houseScale(d.line_count) / 4)
+        .attr('height', d => vis.houseScale(d.line_count) / 4)
+        .attr('x', d => vis.houseScale(d.line_count) / 7)
+        .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
+        .style('fill', 'white');
+      svg.append('rect')
+        .attr('width', d => vis.houseScale(d.line_count) / 4)
+        .attr('height', d => vis.houseScale(d.line_count) / 4)
+        .attr('x', d => vis.houseScale(d.line_count) / 7 * 4)
+        .attr('y', d => vis.houseScale(d.line_count) / 7 - vis.houseScale(d.line_count))
+        .style('fill', 'white');
+    });
 
     const magicNumber = d => vis.garbageScale(d.smells.length) / vis.houseScale(d.line_count) * vis.houseScale(d.line_count);
     vis.nodesG.append('svg:image')
