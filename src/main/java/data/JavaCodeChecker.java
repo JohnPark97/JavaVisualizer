@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class JavaCodeChecker {
 
-    public int MaxClassLength = 200;//200
+    public int MaxClassLength = 300;//200
     public int MaxMethodLength = 50;//50
     public int MaxParameterLength = 3;//3
     public int MaxConditionalStmt = 2;//2

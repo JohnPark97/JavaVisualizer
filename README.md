@@ -24,6 +24,14 @@ To start using this project, you need to get your computer configured so you can
 
 Project Idea:  Java Project UML Class + Dependency Visualizer 
 
+Code Smells detected: 
+- Long Classes 
+- Long Methods 
+- Data Clump 
+- Feature Envy/Too many dereferences 
+- Too many parameters 
+- Complicated Conditionals
+
 Input: github link (source code directory)  
 ![Example](assets/PoC2.PNG)  
 
