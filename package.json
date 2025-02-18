@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@octokit/core": "^3.2.1",
-    "@octokit/rest": "^18.0.9",
+    "@octokit/rest": "^21.1.1",
     "requirejs": "^2.3.6"
   }
 }
